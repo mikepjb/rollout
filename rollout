@@ -22,11 +22,23 @@ echo 'screen? tmux?'
 echo '--> What is my current keyboard layout?'
 echo 'where should I write thing config to?'
 echo "echo 'setxkbmap us etc > /etc/.bashrc'? "
+echo '--> what is my timezone?'
+echo '--> is there a time sync daemon?'
+echo '--> am I inside docker? no init?'
 
 if [ ! $(command -v /bin/bash) ]; then
   echo '!!! bash is not available'
   exit 1
 fi
+
+# }}}
+
+# Have you considered, the aesthetics? {{{
+
+echo '--> inside X'
+echo '--> inside regular console'
+# set ter-228b
+# write to /etc/vconsole.conf
 
 # }}}
 
@@ -130,6 +142,15 @@ echo '--> darkroom? gthumb? --extra? --full?'
 # Technologies {{{
 echo '--> Has postgresql?'
 echo '--> Has redis?'
+# }}}
+
+# Window Management + everyday utils {{{
+
+echo '--> scrot/screenshot util'
+echo '--> slock'
+echo '--> openbox?'
+echo '--> in osx/windows are there any helpers?'
+
 # }}}
 
 # Design decisions
