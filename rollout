@@ -11,6 +11,7 @@ echo '--> Do I have the basics?'
 echo 'grep?'
 echo 'vim?'
 echo 'is vi bound to vim/nvim?'
+echo 'screen? tmux?'
 
 # }}}
 
@@ -41,6 +42,52 @@ echo '--> Is systemd running?'
 echo '--> Is ssh-agent running?'
 
 # Colors {{{
+
+echo 'choose night or day'
+
+# take vars describes here, put them into their respective configs
+
+# TODO should be if --sun/--moon/--lumo etc (lumo by default for now)
+if true; then
+# Sun theme
+*.foreground:   #fcfcfa
+*.background:   #2d2a2e
+*.cursorColor:  #fcfcfa
+
+! black
+*.color0:       #383539
+*.color8:       #989599
+
+! red
+*.color1:       #ff6188
+*.color9:       #ff89a6
+
+! green
+*.color2:       #a9dc76
+*.color10:      #c5e0a9
+
+! yellow
+*.color3:       #fc9867
+*.color11:      #ffd866
+
+! blue
+*.color4:       #78dce8
+*.color12:      #c9edf1
+
+! magenta
+*.color5:       #ab9df2
+*.color13:      #b294bb
+
+! cyan
+*.color6:       #78e8cf
+*.color14:      #c4f9ed
+
+! white
+*.color7:       #c3c1c3
+*.color15:      #f8f8f2
+fi
+
+
 echo '--> Does my shell have colors set?'
 echo '--> for X?'
 echo '--> for OSX?'
@@ -53,9 +100,20 @@ echo '--> for emacs?'
 
 echo '--> Do I have internet?'
 
+echo '--> Has git?'
+echo '--> Maven?'
+echo '--> openjdk 11 and src?'
 echo '--> Has clojure/clj?'
 echo '--> Has lein?'
 echo '--> Has boot?'
+echo '--> Has gimp?'
+echo '--> terminus -- good default you can rely on?'
+
+# Nice to have {{{
+
+echo '--> Has rlwrap'
+
+# }}}
 
 # if --all-languages is selected try to install everything
 echo '--> Has go?'
@@ -67,6 +125,12 @@ echo '--> Has gcc?'
 echo '--> Has rust?'
 
 echo '--> Hugo for blogs? or something different?'
+echo '--> darkroom? gthumb? --extra? --full?'
+
+# Technologies {{{
+echo '--> Has postgresql?'
+echo '--> Has redis?'
+# }}}
 
 # Design decisions
 #
