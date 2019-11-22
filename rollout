@@ -1,0 +1,41 @@
+#!/bin/sh -e
+# vim: fdm=marker
+
+echo 'Rollout'
+
+# Basics {{{
+# Minimal configuration that needs no internet connection
+
+echo '--> Do I have the basics?'
+echo 'grep?'
+echo 'vim?'
+echo 'is vi bound to vim/nvim?'
+
+echo '--> Is rollout or bin file on path?'
+
+
+echo '--> Is git configured?'
+echo 'what do I want to be there?'
+echo 'aa + ci + maybe ra?'
+
+echo '--> Do I have an ssh key?'
+echo '--> Is systemd running?'
+echo '--> Is ssh-agent running?'
+
+# }}}
+
+echo '--> Do I have internet?'
+
+echo '--> Has clojure?'
+echo '--> Has lein?'
+
+# Design decisions
+#
+# Should rollout have softlinked files?
+# Copy files stored inside a single sh file?
+# echo minimal config?
+#
+# How destructive can rollout be? Could I use it on someone else's computer with confidence?
+# maybe just mv to old if found? create new.. diff if diff then write over old
+#
+# Log what happened?
