@@ -3,13 +3,31 @@
 
 echo 'Rollout'
 
-# Basics {{{
+# Basics
 # Minimal configuration that needs no internet connection
+# Tools/PATH {{{
 
 echo '--> Do I have the basics?'
 echo 'grep?'
 echo 'vim?'
 echo 'is vi bound to vim/nvim?'
+
+# }}}
+
+# Locale.. things like LANG/keyboard setting caps as ctrl
+# What should that be called? I guess this is the place to put most shellrc stuff
+# Locale {{{
+
+echo '--> What is my current keyboard layout?'
+echo 'where should I write thing config to?'
+echo "echo 'setxkbmap us etc > /etc/.bashrc'? "
+
+if [ ! $(command -v /bin/bash) ]; then
+  echo '!!! bash is not available'
+  exit 1
+fi
+
+# }}}
 
 echo '--> Is rollout or bin file on path?'
 
@@ -22,12 +40,33 @@ echo '--> Do I have an ssh key?'
 echo '--> Is systemd running?'
 echo '--> Is ssh-agent running?'
 
+# Colors {{{
+echo '--> Does my shell have colors set?'
+echo '--> for X?'
+echo '--> for OSX?'
+echo '--> for Cygwin?'
+echo '--> for Powershell?'
+echo '--> for (neo)vim?'
+echo '--> for emacs?'
+
 # }}}
 
 echo '--> Do I have internet?'
 
-echo '--> Has clojure?'
+echo '--> Has clojure/clj?'
 echo '--> Has lein?'
+echo '--> Has boot?'
+
+# if --all-languages is selected try to install everything
+echo '--> Has go?'
+echo '--> Has haskell?'
+echo '--> Has ruby?'
+echo '--> Has node?'
+echo '--> Has python?'
+echo '--> Has gcc?'
+echo '--> Has rust?'
+
+echo '--> Hugo for blogs? or something different?'
 
 # Design decisions
 #
@@ -39,3 +78,5 @@ echo '--> Has lein?'
 # maybe just mv to old if found? create new.. diff if diff then write over old
 #
 # Log what happened?
+#
+# How can I make output look pretty?
