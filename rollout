@@ -3,6 +3,18 @@
 
 echo 'Rollout'
 
+# Functions {{{
+
+function check_network {
+  if ping -q -c 1 -W 1 1.1.1.1 >/dev/null; then
+    echo '--> We are online!'
+  else
+    echo '--> Network not established, exiting early..'
+  fi
+}
+
+# }}}
+
 # Basics
 # Minimal configuration that needs no internet connection
 # Tools/PATH {{{
@@ -31,6 +43,8 @@ if [ ! $(command -v /bin/bash) ]; then
   exit 1
 fi
 
+# TODO check arch linux for general recommendations
+
 # }}}
 
 # Have you considered, the aesthetics? {{{
@@ -39,6 +53,10 @@ echo '--> inside X'
 echo '--> inside regular console'
 # set ter-228b
 # write to /etc/vconsole.conf
+echo '--> hidpi'
+# write to .xinitrc
+
+echo '--> if openbox-session is available.. what's the fallback?
 
 # }}}
 
@@ -61,42 +79,43 @@ echo 'choose night or day'
 
 # TODO should be if --sun/--moon/--lumo etc (lumo by default for now)
 if true; then
-# Sun theme
-*.foreground:   #fcfcfa
-*.background:   #2d2a2e
-*.cursorColor:  #fcfcfa
-
-! black
-*.color0:       #383539
-*.color8:       #989599
-
-! red
-*.color1:       #ff6188
-*.color9:       #ff89a6
-
-! green
-*.color2:       #a9dc76
-*.color10:      #c5e0a9
-
-! yellow
-*.color3:       #fc9867
-*.color11:      #ffd866
-
-! blue
-*.color4:       #78dce8
-*.color12:      #c9edf1
-
-! magenta
-*.color5:       #ab9df2
-*.color13:      #b294bb
-
-! cyan
-*.color6:       #78e8cf
-*.color14:      #c4f9ed
-
-! white
-*.color7:       #c3c1c3
-*.color15:      #f8f8f2
+  echo 'Sun theme'
+# # Sun theme
+# *.foreground:   #fcfcfa
+# *.background:   #2d2a2e
+# *.cursorColor:  #fcfcfa
+# 
+# ! black
+# *.color0:       #383539
+# *.color8:       #989599
+# 
+# ! red
+# *.color1:       #ff6188
+# *.color9:       #ff89a6
+# 
+# ! green
+# *.color2:       #a9dc76
+# *.color10:      #c5e0a9
+# 
+# ! yellow
+# *.color3:       #fc9867
+# *.color11:      #ffd866
+# 
+# ! blue
+# *.color4:       #78dce8
+# *.color12:      #c9edf1
+# 
+# ! magenta
+# *.color5:       #ab9df2
+# *.color13:      #b294bb
+# 
+# ! cyan
+# *.color6:       #78e8cf
+# *.color14:      #c4f9ed
+# 
+# ! white
+# *.color7:       #c3c1c3
+# *.color15:      #f8f8f2
 fi
 
 
@@ -110,7 +129,7 @@ echo '--> for emacs?'
 
 # }}}
 
-echo '--> Do I have internet?'
+check_network
 
 echo '--> Has git?'
 echo '--> Maven?'
@@ -165,3 +184,6 @@ echo '--> in osx/windows are there any helpers?'
 # Log what happened?
 #
 # How can I make output look pretty?
+#
+# # How do I source missing binaries?
+# -> by package manager? select only a few supported platforms? e.g arch? nix?
