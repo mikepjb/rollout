@@ -267,7 +267,7 @@ echo '--> if openbox-session is available.. what's the fallback?
 # e.g add git aa if aa = not present in alias section
 echo '--> Is git configured?'
 echo 'what do I want to be there?'
-echo 'aa + ci + maybe ra?'
+echo 'aa + ci + maybe ra?, git count'
 # }}}
 # SSH / System daemons (xrdp?) {{{
 echo '--> Do I have an ssh key?'
