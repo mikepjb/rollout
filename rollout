@@ -86,8 +86,6 @@ check_command 'screen' # todo this should be conditional
 # What should that be called? I guess this is the place to put most shellrc stuff
 # Locale {{{
 
-# xterm
-
 echo '--> Check locale-gen?'
 
 # TODO how to reliably check console fonts?
@@ -96,6 +94,7 @@ echo '--> Check locale-gen?'
 #   ls /usr/share/kbd/consolefonts/ | grep 'ter-228b'
 # fi
 
+check_command 'xterm'
 check_command 'openbox-session'
 check_command 'xrdb'
 check_command 'xdpyinfo'
@@ -273,6 +272,11 @@ echo '--> for emacs?'
 
 check_network
 
+check_command 'git'
+check_command 'jq'
+check_command 'nvim'
+check_command 'mvn'
+
 echo '--> Has git?'
 echo '--> Maven?'
 echo '--> openjdk 11 and src?'
@@ -281,6 +285,13 @@ echo '--> Has lein?'
 echo '--> Has boot?'
 echo '--> Has gimp?'
 echo '--> terminus -- good default you can rely on?'
+
+# Git configuration (and others?) {{{
+
+# sed -i append in particular sections
+# e.g add git aa if aa = not present in alias section
+
+# }}}
 
 # Nice to have {{{
 
@@ -329,3 +340,5 @@ echo '--> in osx/windows are there any helpers?'
 #
 # # How do I source missing binaries?
 # -> by package manager? select only a few supported platforms? e.g arch? nix?
+# -> by source? or manual? flag to user so they can solve it themselves..
+#    - maybe just point them in the right direction e.g mac osx? brew.. good luck!
