@@ -184,6 +184,10 @@ echo "$bashrc" > test-bashrc
 # TODO eval bashrc too.. export vars to current session?
 
 # }}}
+# System {{{
+# TODO is systemctl/init available? if not then find a way to run stuff in the background
+# e.g ssh-agent
+# }}}
 
 # Have you considered, the aesthetics? {{{
 
