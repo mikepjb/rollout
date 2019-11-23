@@ -48,6 +48,16 @@ function check_command {
   # else
   #  echo "$1 is installed."
   fi
+
+  if [ "$2" != "" ]; then # we are checking for version
+    if [ "$1" = 'tmux' ]; then
+      v_string=$(tmux -V)
+      if [ "${v_string:5:1}" != "$2" ]; then
+        printf -- "$(red tmux is version "${v_string:5:1}", not $2)\n"
+        exit 127
+      fi
+    fi
+  fi
 }
 
 # TODO trap exit_code and revert file changes if an error occurs
@@ -63,7 +73,7 @@ echo '--> Do I have the basics?'
 check_command grep
 check_command 'vim'
 check_command 'nvim'
-check_command 'tmux'
+check_command 'tmux' 2
 check_command 'screen' # todo this should be conditional
 
 # }}}
