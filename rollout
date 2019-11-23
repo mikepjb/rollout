@@ -50,6 +50,8 @@ function check_command {
   fi
 }
 
+# TODO trap exit_code and revert file changes if an error occurs
+
 # }}}
 
 # Basics
