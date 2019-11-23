@@ -3,6 +3,10 @@
 
 echo 'Rollout ___o'
 # TODO copy rollout to /usr/local/bin? if there are no other executables
+# TODO some basics rely on network resources e.g openbox? and terminus? how
+# should you handle this? Probably have mission critical choice (in this case I
+# suppose xorg is not mission critical and comes after/or as part of external
+# deps)
 
 # Functions {{{
 
