@@ -1,6 +1,8 @@
 #!/bin/sh -e
 # vim: fdm=marker
 
+echo 'Rollout'
+
 # Read Arguments & Environment {{{
 
 if [ ${#@} -ne 0 ]; then
@@ -8,28 +10,17 @@ if [ ${#@} -ne 0 ]; then
     *--help*) printf -- '...help...\n'; exit 0;;
     *-h*) printf -- '...help...\n'; exit 0;;
   esac
-
-  case $* in
-    *--quiet*) quiet="true";;
-    *-q*) quiet="true";;
-  esac
 fi
 
 # }}}
 
 # Functions {{{
 
-function echoq {
-  if [ ! -n "$quiet" ]; then
-    echo $*
-  fi
-}
-
 function check_network {
   if ping -q -c 1 -W 1 1.1.1.1 >/dev/null; then
-    echoq '--> We are online!'
+    echo '--> We are online!'
   else
-    echoq '--> Network not established, exiting early..'
+    echo '--> Network not established, exiting early..'
   fi
 }
 
@@ -38,19 +29,17 @@ function check_command {
     printf -- "You don't seem to have $1 installed.\n"
     exit 127
   # else
-  #  echoq "$1 is installed."
+  #  echo "$1 is installed."
   fi
 }
 
 # }}}
 
-echoq 'Rollout'
-
 # Basics
 # Minimal configuration that needs no internet connection
 # Tools/PATH {{{
 
-echoq '--> Do I have the basics?'
+echo '--> Do I have the basics?'
 
 check_command grep
 check_command 'vim'
@@ -64,15 +53,15 @@ check_command 'tmux'
 # What should that be called? I guess this is the place to put most shellrc stuff
 # Locale {{{
 
-echoq '--> What is my current keyboard layout?'
-echoq 'where should I write thing config to?'
-echoq "echoq 'setxkbmap us etc > /etc/.bashrc'? "
-echoq '--> what is my timezone?'
-echoq '--> is there a time sync daemon?'
-echoq '--> am I inside docker? no init?'
+echo '--> What is my current keyboard layout?'
+echo 'where should I write thing config to?'
+echo "echo 'setxkbmap us etc > /etc/.bashrc'? "
+echo '--> what is my timezone?'
+echo '--> is there a time sync daemon?'
+echo '--> am I inside docker? no init?'
 
 if [ ! $(command -v /bin/bash) ]; then
-  echoq '!!! bash is not available'
+  echo '!!! bash is not available'
   exit 1
 fi
 
@@ -82,37 +71,37 @@ fi
 
 # Have you considered, the aesthetics? {{{
 
-echoq '--> inside X'
-echoq '--> inside regular console'
+echo '--> inside X'
+echo '--> inside regular console'
 # set ter-228b
 # write to /etc/vconsole.conf
-echoq '--> hidpi'
+echo '--> hidpi'
 # write to .xinitrc
 
-echoq '--> if openbox-session is available.. what's the fallback?
+echo '--> if openbox-session is available.. what's the fallback?
 
 # }}}
 
-echoq '--> Is rollout or bin file on path?'
+echo '--> Is rollout or bin file on path?'
 
 
-echoq '--> Is git configured?'
-echoq 'what do I want to be there?'
-echoq 'aa + ci + maybe ra?'
+echo '--> Is git configured?'
+echo 'what do I want to be there?'
+echo 'aa + ci + maybe ra?'
 
-echoq '--> Do I have an ssh key?'
-echoq '--> Is systemd running?'
-echoq '--> Is ssh-agent running?'
+echo '--> Do I have an ssh key?'
+echo '--> Is systemd running?'
+echo '--> Is ssh-agent running?'
 
 # Colors {{{
 
-echoq 'choose night or day'
+echo 'choose night or day'
 
 # take vars describes here, put them into their respective configs
 
 # TODO should be if --sun/--moon/--lumo etc (lumo by default for now)
 if true; then
-  echoq 'Sun theme'
+  echo 'Sun theme'
 # # Sun theme
 # *.foreground:   #fcfcfa
 # *.background:   #2d2a2e
@@ -152,56 +141,56 @@ if true; then
 fi
 
 
-echoq '--> Does my shell have colors set?'
-echoq '--> for X?'
-echoq '--> for OSX?'
-echoq '--> for Cygwin?'
-echoq '--> for Powershell?'
-echoq '--> for (neo)vim?'
-echoq '--> for emacs?'
+echo '--> Does my shell have colors set?'
+echo '--> for X?'
+echo '--> for OSX?'
+echo '--> for Cygwin?'
+echo '--> for Powershell?'
+echo '--> for (neo)vim?'
+echo '--> for emacs?'
 
 # }}}
 
 check_network
 
-echoq '--> Has git?'
-echoq '--> Maven?'
-echoq '--> openjdk 11 and src?'
-echoq '--> Has clojure/clj?'
-echoq '--> Has lein?'
-echoq '--> Has boot?'
-echoq '--> Has gimp?'
-echoq '--> terminus -- good default you can rely on?'
+echo '--> Has git?'
+echo '--> Maven?'
+echo '--> openjdk 11 and src?'
+echo '--> Has clojure/clj?'
+echo '--> Has lein?'
+echo '--> Has boot?'
+echo '--> Has gimp?'
+echo '--> terminus -- good default you can rely on?'
 
 # Nice to have {{{
 
-echoq '--> Has rlwrap'
+echo '--> Has rlwrap'
 
 # }}}
 
 # if --all-languages is selected try to install everything
-echoq '--> Has go?'
-echoq '--> Has haskell?'
-echoq '--> Has ruby?'
-echoq '--> Has node?'
-echoq '--> Has python?'
-echoq '--> Has gcc?'
-echoq '--> Has rust?'
+echo '--> Has go?'
+echo '--> Has haskell?'
+echo '--> Has ruby?'
+echo '--> Has node?'
+echo '--> Has python?'
+echo '--> Has gcc?'
+echo '--> Has rust?'
 
-echoq '--> Hugo for blogs? or something different?'
-echoq '--> darkroom? gthumb? --extra? --full?'
+echo '--> Hugo for blogs? or something different?'
+echo '--> darkroom? gthumb? --extra? --full?'
 
 # Technologies {{{
-echoq '--> Has postgresql?'
-echoq '--> Has redis?'
+echo '--> Has postgresql?'
+echo '--> Has redis?'
 # }}}
 
 # Window Management + everyday utils {{{
 
-echoq '--> scrot/screenshot util'
-echoq '--> slock'
-echoq '--> openbox?'
-echoq '--> in osx/windows are there any helpers?'
+echo '--> scrot/screenshot util'
+echo '--> slock'
+echo '--> openbox?'
+echo '--> in osx/windows are there any helpers?'
 
 # }}}
 
