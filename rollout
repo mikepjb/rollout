@@ -5,6 +5,8 @@ echo 'Rollout'
 
 # Read Arguments & Environment {{{
 
+platform=$(uname)
+
 if [ ${#@} -ne 0 ]; then
   case $* in
     *--help*) printf -- '...help...\n'; exit 0;;
@@ -81,6 +83,12 @@ check_command 'screen' # todo this should be conditional
 # Locale.. things like LANG/keyboard setting caps as ctrl
 # What should that be called? I guess this is the place to put most shellrc stuff
 # Locale {{{
+
+# TODO how to reliably check console fonts?
+# if [ "$platform" = "Linux" ]; then
+#   echo 'KEYMAP=us'
+#   ls /usr/share/kbd/consolefonts/ | grep 'ter-228b'
+# fi
 
 echo '--> What is my current keyboard layout?'
 echo 'where should I write thing config to?'
