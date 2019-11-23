@@ -3,6 +3,18 @@
 
 echo 'Rollout'
 
+# Read Arguments {{{
+
+if [ ${#@} -ne 0 ]; then
+  case $* in
+    *--help*) printf -- '...help...\n';;
+    *-h*) printf -- '...help...\n';;
+  esac
+  exit 0;
+fi;
+
+# }}}
+
 # Functions {{{
 
 function check_network {
