@@ -16,17 +16,34 @@ fi
 
 # Functions {{{
 
+red_code='\031[33m'
+yellow_code='\032[33m'
+green_code='\033[32m'
+reset_code='\033[0m'
+
+function red {
+  printf -- "$red_code$*$reset_code"
+}
+
+function yellow {
+  printf -- "$yellow_code$*$reset_code"
+}
+
+function green {
+  printf -- "$green_code$*$reset_code"
+}
+
 function check_network {
   if ping -q -c 1 -W 1 1.1.1.1 >/dev/null; then
-    echo '--> We are online!'
+    echo "$(green '-->') We are online! $(green Y)"
   else
-    echo '--> Network not established, exiting early..'
+    echo "--> Network not established, exiting early.. $(red X)"
   fi
 }
 
 function check_command {
   if [ ! $(command -v $1) ]; then
-    printf -- "You don't seem to have $1 installed.\n"
+    printf -- "You don't seem to have $1 installed. \n"
     exit 127
   # else
   #  echo "$1 is installed."
