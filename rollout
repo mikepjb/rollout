@@ -5,18 +5,6 @@ echo 'Rollout'
 
 # TODO copy rollout to /usr/local/bin? if there are no other executables
 
-# Read Arguments & Environment {{{
-
-platform=$(uname)
-
-if [ ${#@} -ne 0 ]; then
-  case $* in
-    *--help*) printf -- '...help...\n'; exit 0;;
-    *-h*) printf -- '...help...\n'; exit 0;;
-  esac
-fi
-
-# }}}
 # Functions {{{
 
 red_code='\033[31m'
@@ -74,6 +62,20 @@ function check_command {
 # TODO trap exit_code and revert file changes if an error occurs
 
 # }}}
+# Read Arguments & Environment {{{
+
+platform=$(uname)
+connected=check_network
+
+if [ ${#@} -ne 0 ]; then
+  case $* in
+    *--help*) printf -- '...help...\n'; exit 0;;
+    *-h*) printf -- '...help...\n'; exit 0;;
+  esac
+fi
+
+# }}}
+
 # Basics
 # Minimal configuration that needs no internet connection
 # Tools/PATH {{{
@@ -91,6 +93,7 @@ check_command 'screen' # todo this should be conditional
 
 echo '--> Check locale-gen?'
 
+# TODO how to remap caps as control in vconsole/tty/outside X?
 # TODO how to reliably check console fonts?
 # if [ "$platform" = "Linux" ]; then
 #   echo 'KEYMAP=us'
@@ -190,30 +193,6 @@ echo "$bashrc" > test-bashrc
 # TODO is systemctl/init available? if not then find a way to run stuff in the background
 # e.g ssh-agent
 # }}}
-# Have you considered, the aesthetics? {{{
-
-echo '--> inside X'
-echo '--> inside regular console'
-# set ter-228b
-# write to /etc/vconsole.conf
-echo '--> hidpi'
-# write to .xinitrc
-
-echo '--> if openbox-session is available.. what's the fallback?
-
-# }}}
-
-echo '--> Is rollout or bin file on path?'
-
-
-echo '--> Is git configured?'
-echo 'what do I want to be there?'
-echo 'aa + ci + maybe ra?'
-
-echo '--> Do I have an ssh key?'
-echo '--> Is systemd running?'
-echo '--> Is ssh-agent running?'
-
 # Colors {{{
 
 echo 'choose night or day'
@@ -271,10 +250,34 @@ echo '--> for (neo)vim?'
 echo '--> for emacs?'
 
 # }}}
+# Have you considered, the aesthetics? {{{
 
-# TODO attempt download based on network?
-connected=check_network
+echo '--> inside X'
+echo '--> inside regular console'
+# set ter-228b
+# write to /etc/vconsole.conf
+echo '--> hidpi'
+# write to .xinitrc
 
+echo '--> if openbox-session is available.. what's the fallback?
+
+# }}}
+# Git configuration (and others?) {{{
+
+# sed -i append in particular sections
+# e.g add git aa if aa = not present in alias section
+echo '--> Is git configured?'
+echo 'what do I want to be there?'
+echo 'aa + ci + maybe ra?'
+# }}}
+# SSH / System daemons (xrdp?) {{{
+echo '--> Do I have an ssh key?'
+echo '--> Is systemd running?'
+echo '--> Is ssh-agent running?'
+# }}}
+
+# External Dependencies
+# Things we need to source from the internet
 # Extra Commands {{{
 # Extra.. but basically essential
 
@@ -291,16 +294,10 @@ check_command 'gimp'
 check_command 'rlwrap'
 
 # }}}
-echo '--> terminus -- good default you can rely on?'
-# Git configuration (and others?) {{{
-
-# sed -i append in particular sections
-# e.g add git aa if aa = not present in alias section
-
-# }}}
 # Non essential extras {{{
 # if --all-languages is selected try to install everything
 
+echo '--> terminus -- good default you can rely on?'
 echo '--> Has go?'
 echo '--> Has haskell?'
 echo '--> Has ruby?'
