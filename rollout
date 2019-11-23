@@ -16,9 +16,9 @@ fi
 
 # Functions {{{
 
-red_code='\031[33m'
-yellow_code='\032[33m'
+red_code='\033[31m'
 green_code='\033[32m'
+yellow_code='\033[33m'
 reset_code='\033[0m'
 
 function red {
@@ -43,8 +43,8 @@ function check_network {
 
 function check_command {
   if [ ! $(command -v $1) ]; then
-    printf -- "You don't seem to have $1 installed. \n"
-    exit 127
+    printf -- "$(red You don\'t seem to have $1 installed.)\n"
+    # exit 127 # TODO consider making this a fail
   # else
   #  echo "$1 is installed."
   fi
@@ -62,7 +62,7 @@ check_command grep
 check_command 'vim'
 check_command 'nvim'
 check_command 'tmux'
-# check_command 'screen' # todo this should be conditional
+check_command 'screen' # todo this should be conditional
 
 # }}}
 
