@@ -3,6 +3,8 @@
 
 echo 'Rollout'
 
+# TODO copy rollout to /usr/local/bin? if there are no other executables
+
 # Read Arguments & Environment {{{
 
 platform=$(uname)
@@ -127,18 +129,59 @@ echo "$xinitrc" > test-xinitrc
 echo "$xresources" > test-xresources
 
 echo '--> What is my current keyboard layout?'
-echo 'where should I write thing config to?'
-echo "echo 'setxkbmap us etc > /etc/.bashrc'? "
 echo '--> what is my timezone?'
+# TODO always softlink? check timedatectl first?
 echo '--> is there a time sync daemon?'
 echo '--> am I inside docker? no init?'
 
-if [ ! $(command -v /bin/bash) ]; then
-  echo '!!! bash is not available'
-  exit 1
-fi
+check_command 'bash'
 
 # TODO check arch linux for general recommendations
+
+# }}}
+# Shell {{{
+
+# TODO how to easily switch between projects beside bind?
+# CDPATH with completion?
+bashrc=$(cat <<"EOF"
+shopt -s nocaseglob #case insensitive completion
+[[ $- =~ i ]] && stty -ixoff -ixon # Disable CTRL-S and CTRL-Q
+
+export EDITOR=nvim
+export XDG_CONFIG_HOME=$HOME/.config
+export PAGER='less -S'
+export SSH_AUTH_SOCK=$HOME/.ssh/ssh-agent.socket
+export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin
+
+alias gr='git rev-parse --show-toplevel || echo "."'
+alias ..='cd ..'
+alias t='tmux attach -t vty || tmux new -s vty'
+alias de='export $(egrep -v "^#" .env | xargs)'
+alias xclip='xclip -sel clip'
+alias jv="jq -C | less -R"
+
+viw() { vi `which "$1"` }
+git_branch() { echo -e "$(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')" }
+
+git_state() {
+    if git rev-parse --git-dir >/dev/null 2>&1; then
+        echo -ne "$(git_branch)"
+    else
+        echo -ne "!"
+    fi
+}
+
+jobs_marker() {
+  local n=$(jobs | wc -l)
+  ((n)) && echo -n '&' || echo -n '$'
+}
+
+PROMPT_COMMAND='PS1="\W($(git_state)) $(jobs_marker) "'
+EOF
+)
+
+echo "$bashrc" > test-bashrc
+# TODO eval bashrc too.. export vars to current session?
 
 # }}}
 
