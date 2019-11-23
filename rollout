@@ -84,11 +84,47 @@ check_command 'screen' # todo this should be conditional
 # What should that be called? I guess this is the place to put most shellrc stuff
 # Locale {{{
 
+# xterm
+
+echo '--> Check locale-gen?'
+
 # TODO how to reliably check console fonts?
 # if [ "$platform" = "Linux" ]; then
 #   echo 'KEYMAP=us'
 #   ls /usr/share/kbd/consolefonts/ | grep 'ter-228b'
 # fi
+
+check_command 'openbox-session'
+check_command 'xrdb'
+check_command 'xdpyinfo'
+check_command 'awk'
+check_command 'xset'
+check_command 'setxkbmap'
+
+xresources=$(cat <<"EOF"
+something
+EOF
+)
+
+xinitrc=$(cat <<"EOF"
+LANG='en_GB.UTF-8'
+
+[[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
+
+if [ `xdpyinfo | awk '/dimensions/{print $2}'` = '3840x2160' ]; then
+  xrdb -merge <<< 'Xft.dpi: 144'
+fi
+
+xset r rate 200 25
+
+setxkbmap -layout us -option ctrl:nocaps
+
+exec openbox-session
+EOF
+)
+
+echo "$xinitrc" > test-xinitrc
+echo "$xresources" > test-xresources
 
 echo '--> What is my current keyboard layout?'
 echo 'where should I write thing config to?'
