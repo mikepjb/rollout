@@ -53,13 +53,13 @@ function write_and_save { # write_and_save ~/.bashrc "$bashrc"
       mkdir -p ~/.config/backup
       mv "$1" ~/.config/backup/$name
       echo "$(blue '  ->') writing new $1"
-      echo "$bashrc" > "$1"
+      echo "$2" > "$1"
     else
       echo "$(blue '  ->') "$1" matches generated version, no action required"
     fi
   else
     echo "$(blue '  ->') "$1" does not exist, writing new version"
-    echo "$bashrc" > "$1"
+    echo "$2" > "$1"
   fi
 }
 
@@ -228,7 +228,7 @@ EOF
 xinitrc=$(cat <<"EOF"
 LANG='en_GB.UTF-8'
 
-[[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
+[[ -f ~/.xresources ]] && xrdb -merge ~/.xresources
 
 if [ `xdpyinfo | awk '/dimensions/{print $2}'` = '3840x2160' ]; then
   xrdb -merge <<< 'Xft.dpi: 144'
@@ -243,8 +243,8 @@ EOF
 )
 
 xrdb -merge <<< "$xresources"
-echo "$xinitrc" > test-xinitrc
-echo "$xresources" > test-xresources
+write_and_save ~/.xinitrc "$xinitrc"
+write_and_save ~/.xresources "$xresources"
 
 echo '--> What is my current keyboard layout?'
 echo '--> what is my timezone?'
@@ -279,9 +279,9 @@ alias xclip='xclip -sel clip'
 alias jv="jq -C | less -R"
 alias ssha="ssh-agent -a $SSH_AUTH_SOCK && ssh-add ~/.ssh/id_rsa"
 
-viw() { vi `which "$1"` }
-pp() { until ping -c1 1.1.1.1 >/dev/null 2>&1; do :; done }
-git_branch() { echo -e "$(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')" }
+viw() { vi `which "$1"`; }
+pp() { until ping -c1 1.1.1.1 >/dev/null 2>&1; do :; done; }
+git_branch() { echo -e "$(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')"; }
 
 git_state() {
     if git rev-parse --git-dir >/dev/null 2>&1; then
