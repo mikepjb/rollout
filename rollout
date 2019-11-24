@@ -99,13 +99,6 @@ done
 
 check_command tmux 2
 
-# TODO install clojure?
-# curl -O https://download.clojure.org/install/linux-install-1.10.1.489.sh
-# chmod +x linux-install-1.10.1.489.sh
-# sudo ./linux-install-1.10.1.489.sh
-
-# TODO do I have openjdk11-src? or the src of my currently installed java?
-
 # }}}
 
 # Configuration
