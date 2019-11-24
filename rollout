@@ -38,16 +38,6 @@ function green { printf -- "$green_code$*$reset_code"; }
 function blue { printf -- "$blue_code$*$reset_code"; }
 function magenta { printf -- "$magenta_code$*$reset_code"; }
 
-function check_network {
-  if ping -q -c 1 -W 1 1.1.1.1 >/dev/null; then
-    echo "  $(blue '->') We are online! $(green Y)"
-    return 0
-  else
-    echo "--> Network not established, exiting early.. $(red X)"
-    return 1
-  fi
-}
-
 function check_command {
   if [ ! $(command -v $1) ]; then
     printf -- "$(yellow You don\'t seem to have $1 installed.)\n"
@@ -83,8 +73,6 @@ echo "$(green '==>') Rollout ___o"
 
 platform=$(uname)
 theme="dark"
-# connected=$(check_network)
-# check_network
 
 if [ ${#@} -ne 0 ]; then
   case $* in
@@ -279,6 +267,8 @@ echo '--> am I inside docker? no init?'
 # }}}
 # Shell {{{
 
+printf -- "$(green '==>') Shell\n"
+
 # TODO how to easily switch between projects beside bind?
 # CDPATH with completion?
 bashrc=$(cat <<"EOF"
@@ -297,7 +287,7 @@ alias t='tmux attach -t vty || tmux new -s vty'
 alias de='export $(egrep -v "^#" .env | xargs)'
 alias xclip='xclip -sel clip'
 alias jv="jq -C | less -R"
-alias ssha="ssh-agent -D -a $SSH_AUTH_SOCK"
+alias ssha="ssh-agent -a $SSH_AUTH_SOCK && ssh-add ~/.ssh/id_rsa"
 
 viw() { vi `which "$1"` }
 pp() { until ping -c1 1.1.1.1 >/dev/null 2>&1; do :; done }
@@ -324,20 +314,21 @@ echo "$bashrc" > test-bashrc
 # TODO eval bashrc too.. export vars to current session?
 
 # }}}
-# System {{{
-# TODO is systemctl/init available? if not then find a way to run stuff in the background
-# e.g ssh-agent
-# }}}
-# Git configuration (and others?) {{{
+# Git {{{
+printf -- "$(green '==>') Git Aliases\n"
 
-# sed -i append in particular sections
-# e.g add git aa if aa = not present in alias section
-echo '--> Is git configured?'
-echo 'what do I want to be there?'
-echo 'aa + ci + maybe ra?, git count'
-# }}}
-# SSH / System daemons (xrdp?) {{{
-echo '--> Do I have an ssh key?'
-echo '--> Is systemd running?'
-echo '--> Is ssh-agent running?'
+git config --global --replace-all alias.aa 'add --all'
+git config --global --replace-all alias.br 'branch --sort=committerdate'
+git config --global --replace-all alias.count 'shortlog -sn'
+git config --global --replace-all alias.ff 'pull --ff-only'
+git config --global --replace-all alias.co 'checkout'
+git config --global --replace-all alias.ci 'commit --verbose'
+git config --global --replace-all alias.di 'diff'
+git config --global --replace-all alias.dc 'diff --cache'
+git config --global --replace-all alias.dd 'diff --stat origin/develop HEAD'
+git config --global --replace-all alias.list 'config --global --list'
+git config --global --replace-all alias.amend 'commit --amend'
+git config --global --replace-all alias.ffa 'git fetch --all && git rebase origin/master'
+git config --global --replace-all alias.push-new 'push -u origin HEAD'
+git config --global --replace-all alias.ra "log --abbrev-commit --pretty=format:'%<(7)%C(yellow)%h %Cgreen%<(15)%cr%C(bold cyan)%<(17)<%an>%C(red)%d %Creset %s'"
 # }}}
