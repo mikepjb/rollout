@@ -44,6 +44,25 @@ function check_command {
   fi
 }
 
+function write_and_save { # write_and_save ~/.bashrc "$bashrc"
+  name=$(basename "$1")
+  echo "$(blue '  ->') checking if $1 matches..."
+  if [ -f "$1" ]; then
+    if [ "$(cat $1)" != "$2" ]; then
+      echo "$(blue '  ->') $1 does not match, backing up to ~/.config/backup/$name"
+      mkdir -p ~/.config/backup
+      mv "$1" ~/.config/backup/$name
+      echo "$(blue '  ->') writing new $1"
+      echo "$bashrc" > "$1"
+    else
+      echo "$(blue '  ->') "$1" matches generated version, no action required"
+    fi
+  else
+    echo "$(blue '  ->') "$1" does not exist, writing new version"
+    echo "$bashrc" > "$1"
+  fi
+}
+
 # TODO trap exit_code and revert file changes if an error occurs
 
 # }}}
@@ -65,7 +84,6 @@ if [ ${#@} -ne 0 ]; then
 fi
 
 # }}}
-
 # Dependencies {{{
 
 deps='#basics
@@ -73,7 +91,7 @@ tmux git jq java lein boot gimp rlwrap awk grep vim nvim sed ssh
 #languages
 clojure python ruby node bash
 #build-tools
-gcc make automake autoconf 
+gcc make automake autoconf basename
 #development-tools
 htop ssh-agent ssh-keygen
 #development-servers
@@ -100,8 +118,6 @@ done
 check_command tmux 2
 
 # }}}
-
-# Configuration
 # Colors {{{
 printf -- "$(green '==>') Color\n"
 if [ "$theme" = "dark" ]; then
@@ -284,9 +300,7 @@ PROMPT_COMMAND='PS1="\W($(git_state)) $(jobs_marker) "'
 EOF
 )
 
-echo "$bashrc" > test-bashrc
-# TODO eval bashrc too.. export vars to current session?
-
+write_and_save ~/.bashrc "$bashrc"
 # }}}
 # Git {{{
 printf -- "$(green '==>') Git Aliases\n"
