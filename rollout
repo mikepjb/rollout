@@ -1,13 +1,29 @@
 #!/bin/sh -e
 # vim: fdm=marker
 
+# localectl set-x11-keymap us ctrl:nocaps
+
 echo 'Rollout ___o'
 # TODO copy rollout to /usr/local/bin? if there are no other executables
-# TODO some basics rely on network resources e.g openbox? and terminus? how
-# should you handle this? Probably have mission critical choice (in this case I
-# suppose xorg is not mission critical and comes after/or as part of external
-# deps)
 
+# Design decisions {{{
+#
+# Should rollout have softlinked files?
+# Copy files stored inside a single sh file?
+# echo minimal config?
+#
+# How destructive can rollout be? Could I use it on someone else's computer with confidence?
+# maybe just mv to old if found? create new.. diff if diff then write over old
+#
+# Log what happened?
+#
+# How can I make output look pretty?
+#
+# # How do I source missing binaries?
+# -> by package manager? select only a few supported platforms? e.g arch? nix?
+# -> by source? or manual? flag to user so they can solve it themselves..
+#    - maybe just point them in the right direction e.g mac osx? brew.. good luck!
+# }}}
 # Functions {{{
 
 red_code='\033[31m'
@@ -79,24 +95,46 @@ fi
 
 # }}}
 
-# Basics
-# Minimal configuration that needs no internet connection
+# 
+# Dependencies {{{
+
+# TODO deps needs sorting
+# we need java
+# env/flag for alternate link?
+# flag for --install
+
+# think.. godeps?
+
+# List of programs I'd like to have available (for dev):
+# tmux git jq java boot gimp rlwrap gcc make automake autoconf \
+# redis postgresql mongo htop openbox tmux neovim vim xterm \
+# awk xorg openssh
+
+# List of programs required for Clojure development:
+# openjdk11 openjdk11-src lein clj
+
+# List of programs I'd like to have available (personal):
+# darkatable gthumb
+
+# pacman? apt? yum? use their repos?
+
+# }}}
+
+# Configuration
 # Tools/PATH {{{
 
 echo '--> Do I have the basics?'
 
 check_command grep
-check_command 'vim'
-check_command 'nvim'
-check_command 'tmux' 2
-check_command 'screen' # todo this should be conditional
+check_command vim
+check_command nvim
+check_command tmux 2
 
 # }}}
 # Locale {{{
 
 echo '--> Check locale-gen?'
 
-# TODO how to remap caps as control in vconsole/tty/outside X?
 # TODO how to reliably check console fonts?
 # if [ "$platform" = "Linux" ]; then
 #   echo 'KEYMAP=us'
@@ -169,6 +207,7 @@ alias xclip='xclip -sel clip'
 alias jv="jq -C | less -R"
 
 viw() { vi `which "$1"` }
+pp() { until ping -c1 1.1.1.1 >/dev/null 2>&1; do :; done }
 git_branch() { echo -e "$(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')" }
 
 git_state() {
@@ -195,6 +234,15 @@ echo "$bashrc" > test-bashrc
 # System {{{
 # TODO is systemctl/init available? if not then find a way to run stuff in the background
 # e.g ssh-agent
+# }}}
+# Font {{{
+
+terminus=$(fc-list : family | grep Terminus)
+
+if [ "$terminus" = '' ]; then
+  yellow "Terminus could not be found\n"
+fi
+
 # }}}
 # Colors {{{
 
@@ -253,18 +301,6 @@ echo '--> for (neo)vim?'
 echo '--> for emacs?'
 
 # }}}
-# Have you considered, the aesthetics? {{{
-
-echo '--> inside X'
-echo '--> inside regular console'
-# set ter-228b
-# write to /etc/vconsole.conf
-echo '--> hidpi'
-# write to .xinitrc
-
-echo '--> if openbox-session is available.. what's the fallback?
-
-# }}}
 # Git configuration (and others?) {{{
 
 # sed -i append in particular sections
@@ -279,67 +315,3 @@ echo '--> Is systemd running?'
 echo '--> Is ssh-agent running?'
 # }}}
 
-# External Dependencies
-# Things we need to source from the internet
-# Extra Commands {{{
-# Extra.. but basically essential
-
-check_command 'git'
-check_command 'jq'
-check_command 'nvim'
-check_command 'mvn'
-check_command 'java' 'openjdk 11'
-# TODO has openjdk 11 source?
-check_command 'clj'
-check_command 'lein'
-check_command 'boot'
-check_command 'gimp'
-check_command 'rlwrap'
-
-# }}}
-# Non essential extras {{{
-# if --all-languages is selected try to install everything
-
-echo '--> terminus -- good default you can rely on?'
-echo '--> Has go?'
-echo '--> Has haskell?'
-echo '--> Has ruby?'
-echo '--> Has node?'
-echo '--> Has python?'
-echo '--> Has gcc?'
-echo '--> Has rust?'
-
-echo '--> Hugo for blogs? or something different?'
-echo '--> darkroom? gthumb? --extra? --full?'
-
-# }}}
-# Development Servers {{{
-echo '--> Has postgresql?'
-echo '--> Has redis?'
-# }}}
-# Window Management + everyday utils {{{
-
-echo '--> scrot/screenshot util'
-echo '--> slock'
-echo '--> openbox?'
-echo '--> in osx/windows are there any helpers?'
-
-# }}}
-# Design decisions {{{
-#
-# Should rollout have softlinked files?
-# Copy files stored inside a single sh file?
-# echo minimal config?
-#
-# How destructive can rollout be? Could I use it on someone else's computer with confidence?
-# maybe just mv to old if found? create new.. diff if diff then write over old
-#
-# Log what happened?
-#
-# How can I make output look pretty?
-#
-# # How do I source missing binaries?
-# -> by package manager? select only a few supported platforms? e.g arch? nix?
-# -> by source? or manual? flag to user so they can solve it themselves..
-#    - maybe just point them in the right direction e.g mac osx? brew.. good luck!
-# }}}
