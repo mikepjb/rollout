@@ -104,7 +104,9 @@ fi
 # think.. godeps?
 
 deps='#basics
-tmux git jq java boot gimp rlwrap awk grep vim nvim
+tmux git jq java boot gimp rlwrap awk grep vim nvim sed
+#languages
+clojure python ruby node bash
 #build-tools
 gcc make automake autoconf 
 #development-tools
