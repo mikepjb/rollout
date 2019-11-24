@@ -1,7 +1,6 @@
 #!/bin/sh -e
 # vim: fdm=marker
 
-# TODO copy rollout to /usr/local/bin? if there are no other executables
 # TODO backups should be timestamped e.g .backup-.tmux.conf-20180103
 
 # Design decisions {{{
@@ -317,6 +316,7 @@ echo "$bashrc" > test-bashrc
 # Git {{{
 printf -- "$(green '==>') Git Aliases\n"
 
+git config --global --replace-all core.editor 'vim'
 git config --global --replace-all alias.aa 'add --all'
 git config --global --replace-all alias.br 'branch --sort=committerdate'
 git config --global --replace-all alias.count 'shortlog -sn'
