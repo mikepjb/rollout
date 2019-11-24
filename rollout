@@ -1,6 +1,8 @@
 #!/bin/sh -e
 # vim: fdm=marker
 
+# TODO check arch linux for general recommendations
+
 # Functions {{{
 
 # N.B 1; also turns on bold mode
@@ -85,7 +87,7 @@ fi
 # Dependencies {{{
 
 deps='#basics
-tmux git jq java lein boot gimp rlwrap awk grep vim nvim sed ssh curl wget
+tmux git jq java lein boot gimp rlwrap awk grep vim nvim sed ssh curl wget man
 #languages
 clojure python ruby node bash
 #build-tools
@@ -93,7 +95,7 @@ gcc make automake autoconf basename
 #development-tools
 htop ssh-agent ssh-keygen rg xmllint
 #development-servers
-redis-server postgres mongo 
+redis-server postgres mongo
 #ui
 xterm openbox-session xrdb xdpyinfo xset setxkbmap firefox chromium
 #photography
@@ -183,7 +185,6 @@ fi
 echo '--> Check locale-gen?'
 
 printf -- "$(yellow '  ->') I do not currently write to /etc/vconsole.conf $(yellow '(not implemented)')\n"
-printf -- "$(yellow '  ->') I do not currently write to tmux.conf $(yellow '(not implemented)')\n"
 
 xresources=$(cat <<EOF
 XTerm*utf8: 1
@@ -244,19 +245,18 @@ xrdb -merge <<< "$xresources"
 write_and_save ~/.xinitrc "$xinitrc"
 write_and_save ~/.xresources "$xresources"
 
-echo '--> What is my current keyboard layout?'
-echo '--> what is my timezone?'
-# TODO always softlink? check timedatectl first?
-echo '--> is there a time sync daemon?'
-echo '--> am I inside docker? no init?'
-
-# TODO check arch linux for general recommendations
-
 # }}}
 # Editor {{{
 printf -- "$(green '==>') Editor\n"
 
+if ! diff $(which vi) $(which vim) >/dev/null; then
+  echo "$(blue '  ->') vi and vim are not the same $(yellow '(mismatch)')"
+  echo "$(blue '  ->') attempting to copy vim binary to /usr/local/bin..."
+  sudo cp $(which vim) /usr/local/bin/vi
+fi
+
 vimrc=$(cat <<"EOF"
+syn on
 set nu autowrite hidden shiftwidth=2 tabstop=2 gdefault mouse=a
 set clipboard+=unnamedplus expandtab smarttab ignorecase smartcase
 setglobal tags=./tags;
@@ -270,16 +270,21 @@ nnoremap <C-q> :quit<cr>
 nnoremap <Leader>e :e <C-R>=expand("%:p:h") . '/'<CR>
 nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>f :FZF<cr>
-nnoremap <leader>i :e ~/.config/nvim/init.vim<cr>
 imap <C-c> <esc>
 
-map <C-h> <C-w><C-h> | cnoremap <C-f> <Right> | inoremap <C-f> <Right>
-map <C-j> <C-w><C-j> | cnoremap <C-b> <Left>  | inoremap <C-b> <Left>
-map <C-k> <C-w><C-k> | cnoremap <C-a> <Home>  | inoremap <C-d> <Delete>
-map <C-l> <C-w><C-l> | cnoremap <C-e> <End>   | inoremap <C-l> <space>=><space>
+map <C-h> <C-w><C-h>
+map <C-j> <C-w><C-j>
+map <C-k> <C-w><C-k>
+map <C-l> <C-w><C-l>
+cnoremap <C-f> <Right>
+cnoremap <C-b> <Left>
+cnoremap <C-a> <Home>
+cnoremap <C-e> <End>
+inoremap <C-f> <Right>
+inoremap <C-b> <Left>
+inoremap <C-d> <Delete>        command! PrettifyJSON :%!python -m json.tool
+inoremap <C-l> <space>=><space>command! PrettifyXML  :%!xmllint --format -
 
-command! PrettifyJSON :%!python -m json.tool
-command! PrettifyXML  :%!xmllint --format -
 command! TrimWhitespace :%s/\s\+$//e
 command! ClearPrefixWhitespace :%s/^\s\+//g
 
@@ -304,7 +309,7 @@ bashrc=$(cat <<"EOF"
 shopt -s nocaseglob #case insensitive completion
 [[ $- =~ i ]] && stty -ixoff -ixon # Disable CTRL-S and CTRL-Q
 
-export EDITOR=nvim
+export EDITOR=vim
 export XDG_CONFIG_HOME=$HOME/.config
 export PAGER='less -S'
 export SSH_AUTH_SOCK=$HOME/.ssh/ssh-agent.socket
@@ -340,6 +345,37 @@ EOF
 )
 
 write_and_save ~/.bashrc "$bashrc"
+
+tmuxconf=$(cat <<"EOF"
+set -g status-position bottom
+set -g default-terminal "tmux-256color"
+set -g default-command $SHELL
+set -g history-limit 100000
+set -g mouse on
+set -g escape-time 1
+set -g base-index 1
+set -g renumber-windows on
+set -g visual-activity on
+set-window-option -g alternate-screen on
+set -g set-clipboard external # was originally on
+set -g status on
+unbind C-b; set -g prefix M-\;
+unbind r ; bind r source-file ~/.tmux.conf \; display "Tmux Reloaded!"
+unbind v ; bind v split-window -c "#{pane_current_path}"
+unbind = ; bind = new-window -c "#{pane_current_path}"
+unbind s ; bind s split-window -h -c "#{pane_current_path}"
+unbind x ; bind x kill-pane
+unbind ] ; bind ] command-prompt "rename-window '%%'"
+bind -n M-O last-window
+bind -n M-o select-pane -t :.+
+set -g status-right "#[fg=colour1]//#[fg=default] %d/%m/%y %I:%M" # ʕ•ᴥ•ʔ
+set -g status-style fg=default,bg=default,default
+set -g pane-border-style fg=default,bg=default,default
+set -g pane-active-border-style fg=default,bg=default,default
+EOF
+)
+
+write_and_save ~/.tmux.conf "$tmuxconf"
 # }}}
 # Git {{{
 printf -- "$(green '==>') Git Aliases\n"
