@@ -2,6 +2,7 @@
 # vim: fdm=marker
 
 # TODO copy rollout to /usr/local/bin? if there are no other executables
+# TODO backups should be timestamped e.g .backup-.tmux.conf-20180103
 
 # Design decisions {{{
 #
@@ -98,14 +99,6 @@ fi
 
 # Dependencies {{{
 
-# Do not install, just warn me about it. (stretch goal - install if pacman?)
-# TODO deps needs sorting
-# we need java
-# env/flag for alternate link?
-# flag for --install
-
-# think.. godeps?
-
 deps='#basics
 tmux git jq java lein boot gimp rlwrap awk grep vim nvim sed ssh
 #languages
@@ -113,14 +106,13 @@ clojure python ruby node bash
 #build-tools
 gcc make automake autoconf 
 #development-tools
-htop
+htop ssh-agent ssh-keygen
 #development-servers
-redis postgres mongo 
+redis-server postgres mongo 
 #ui
 xterm openbox-session xrdb xdpyinfo xset setxkbmap firefox chromium
 #photography
-darktable gthumb
-'
+darktable gthumb'
 
 echo "$(green '==>') Dependencies"
 
@@ -149,11 +141,8 @@ check_command tmux 2
 
 # Configuration
 # Colors {{{
-
-# take vars describes here, put them into their respective configs
-
+printf -- "$(green '==>') Color\n"
 if [ "$theme" = "dark" ]; then
-  printf -- "$(green '==>') Color\n"
   printf -- "$(blue '  ->') Setting Lumo (dark) theme\n"
   foreground=#fcfcfa
   background=#2d2a2e
@@ -175,6 +164,7 @@ if [ "$theme" = "dark" ]; then
   white=#c3c1c3
   bright_white=#f8f8f2
 else
+  printf -- "$(blue '  ->') Setting dark theme variables\n"
   foreground=#444444
   background=#eeeeee
   cursor=#444444
@@ -196,21 +186,19 @@ else
   bright_white=#eeeeee
 fi
 
-echo '--> Does my shell have colors set?'
-echo '--> for X?'
-echo '--> for OSX?'
-echo '--> for Cygwin?'
-echo '--> for Powershell?'
-echo '--> for (neo)vim?'
-echo '--> for emacs?'
+printf -- "$(yellow '  ->') write vim/neovim color files $(yellow '(not implemented)')\n"
 
 # }}}
 # Font {{{
+printf -- "$(green '==>') Font\n"
 
 terminus=$(fc-list : family | grep Terminus)
 
 if [ "$terminus" = '' ]; then
-  yellow "Terminus could not be found\n"
+  printf -- "$(red '  ->') Terminus font could not be found using fc-list $(red '(missing)')\n"
+  printf -- "$(yellow '  ->') We could have chosen a backup font.. $(yellow '(not implemented)')\n"
+else
+  printf -- "$(blue '  ->') Terminus font found using fc-list\n"
 fi
 
 # }}}
@@ -218,14 +206,8 @@ fi
 
 echo '--> Check locale-gen?'
 
-# TODO how to reliably check console fonts?
-# if [ "$platform" = "Linux" ]; then
-#   echo 'KEYMAP=us'
-#   ls /usr/share/kbd/consolefonts/ | grep 'ter-228b'
-# fi
-
-# TODO tmux.conf?
-# TODO if linux then do x stuff (xterm) .. osx can't use this..
+printf -- "$(yellow '  ->') I do not currently write to /etc/vconsole.conf $(yellow '(not implemented)')\n"
+printf -- "$(yellow '  ->') I do not currently write to tmux.conf $(yellow '(not implemented)')\n"
 
 xresources=$(cat <<EOF
 XTerm*utf8: 1
@@ -292,8 +274,6 @@ echo '--> what is my timezone?'
 echo '--> is there a time sync daemon?'
 echo '--> am I inside docker? no init?'
 
-check_command 'bash'
-
 # TODO check arch linux for general recommendations
 
 # }}}
@@ -317,6 +297,7 @@ alias t='tmux attach -t vty || tmux new -s vty'
 alias de='export $(egrep -v "^#" .env | xargs)'
 alias xclip='xclip -sel clip'
 alias jv="jq -C | less -R"
+alias ssha="ssh-agent -D -a $SSH_AUTH_SOCK"
 
 viw() { vi `which "$1"` }
 pp() { until ping -c1 1.1.1.1 >/dev/null 2>&1; do :; done }
