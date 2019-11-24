@@ -1,9 +1,6 @@
 #!/bin/sh -e
 # vim: fdm=marker
 
-# localectl set-x11-keymap us ctrl:nocaps
-
-echo 'Rollout ___o'
 # TODO copy rollout to /usr/local/bin? if there are no other executables
 
 # Design decisions {{{
@@ -81,6 +78,9 @@ function check_command {
 # TODO trap exit_code and revert file changes if an error occurs
 
 # }}}
+### Start {{{
+echo 'Rollout ___o'
+# }}}
 # Read Arguments & Environment {{{
 
 platform=$(uname)
@@ -95,9 +95,9 @@ fi
 
 # }}}
 
-# 
 # Dependencies {{{
 
+# Do not install, just warn me about it. (stretch goal - install if pacman?)
 # TODO deps needs sorting
 # we need java
 # env/flag for alternate link?
@@ -108,7 +108,7 @@ fi
 # List of programs I'd like to have available (for dev):
 # tmux git jq java boot gimp rlwrap gcc make automake autoconf \
 # redis postgresql mongo htop openbox tmux neovim vim xterm \
-# awk xorg openssh
+# awk xorg openssh firefox chromium google-chrome
 
 # List of programs required for Clojure development:
 # openjdk11 openjdk11-src lein clj
@@ -314,4 +314,3 @@ echo '--> Do I have an ssh key?'
 echo '--> Is systemd running?'
 echo '--> Is ssh-agent running?'
 # }}}
-
