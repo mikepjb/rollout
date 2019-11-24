@@ -1,8 +1,6 @@
 #!/bin/sh -e
 # vim: fdm=marker
 
-# TODO backups should be timestamped e.g .backup-.tmux.conf-20180103
-
 # Functions {{{
 
 # N.B 1; also turns on bold mode
