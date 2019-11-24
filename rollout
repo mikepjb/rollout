@@ -115,13 +115,24 @@ redis postgres mongo
 xterm openbox-session xrdb xdpyinfo xset setxkbmap
 '
 
+echo "$(green '==>') Dependencies"
+
 for dep in $deps; do
   if [ "${dep:0:1}" == '#' ]; then
-    echo "$(green '==>') ${dep:1}"
+    echo "$(blue '  ->') ${dep:1}"
   else
-    echo "$(blue '  ->') $dep"
+    if [ $(command -v $dep) ]; then
+      echo "$(yellow '   ->') $dep"
+    else
+      echo "$(red '   ->') $dep $(red '(missing)')"
+    fi
   fi
 done
+
+# TODO install clojure?
+# curl -O https://download.clojure.org/install/linux-install-1.10.1.489.sh
+# chmod +x linux-install-1.10.1.489.sh
+# sudo ./linux-install-1.10.1.489.sh
 
 # List of programs I'd like to have available (for dev):
 # tmux git jq java boot gimp rlwrap gcc make automake autoconf \
