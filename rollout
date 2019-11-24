@@ -87,13 +87,13 @@ fi
 # Dependencies {{{
 
 deps='#basics
-tmux git jq java lein boot gimp rlwrap awk grep vim nvim sed ssh
+tmux git jq java lein boot gimp rlwrap awk grep vim nvim sed ssh curl wget
 #languages
 clojure python ruby node bash
 #build-tools
 gcc make automake autoconf basename
 #development-tools
-htop ssh-agent ssh-keygen
+htop ssh-agent ssh-keygen rg xmllint
 #development-servers
 redis-server postgres mongo 
 #ui
@@ -253,6 +253,47 @@ echo '--> is there a time sync daemon?'
 echo '--> am I inside docker? no init?'
 
 # TODO check arch linux for general recommendations
+
+# }}}
+# Editor {{{
+printf -- "$(green '==>') Editor\n"
+
+vimrc=$(cat <<"EOF"
+set nu autowrite hidden shiftwidth=2 tabstop=2 gdefault mouse=a
+set clipboard+=unnamedplus expandtab smarttab ignorecase smartcase
+setglobal tags=./tags;
+let g:ftplugin_sql_omni_key = '<Nop>' " ctrl+c is for escape, not completion.
+
+let mapleader= ' '
+nnoremap Y y$
+nnoremap Q @q
+nnoremap gb :Gblame<cr>
+nnoremap <C-q> :quit<cr>
+nnoremap <Leader>e :e <C-R>=expand("%:p:h") . '/'<CR>
+nnoremap <leader>b :Buffers<cr>
+nnoremap <leader>f :FZF<cr>
+nnoremap <leader>i :e ~/.config/nvim/init.vim<cr>
+imap <C-c> <esc>
+
+map <C-h> <C-w><C-h> | cnoremap <C-f> <Right> | inoremap <C-f> <Right>
+map <C-j> <C-w><C-j> | cnoremap <C-b> <Left>  | inoremap <C-b> <Left>
+map <C-k> <C-w><C-k> | cnoremap <C-a> <Home>  | inoremap <C-d> <Delete>
+map <C-l> <C-w><C-l> | cnoremap <C-e> <End>   | inoremap <C-l> <space>=><space>
+
+command! PrettifyJSON :%!python -m json.tool
+command! PrettifyXML  :%!xmllint --format -
+command! TrimWhitespace :%s/\s\+$//e
+command! ClearPrefixWhitespace :%s/^\s\+//g
+
+colorscheme lumo
+
+augroup clojure
+  au Syntax clojure nmap <buffer>  gd <Plug>FireplaceDjump
+augroup end
+EOF
+)
+
+write_and_save ~/.vimrc "$vimrc"
 
 # }}}
 # Shell {{{
