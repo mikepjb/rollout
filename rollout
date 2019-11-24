@@ -3,24 +3,6 @@
 
 # TODO backups should be timestamped e.g .backup-.tmux.conf-20180103
 
-# Design decisions {{{
-#
-# Should rollout have softlinked files?
-# Copy files stored inside a single sh file?
-# echo minimal config?
-#
-# How destructive can rollout be? Could I use it on someone else's computer with confidence?
-# maybe just mv to old if found? create new.. diff if diff then write over old
-#
-# Log what happened?
-#
-# How can I make output look pretty?
-#
-# # How do I source missing binaries?
-# -> by package manager? select only a few supported platforms? e.g arch? nix?
-# -> by source? or manual? flag to user so they can solve it themselves..
-#    - maybe just point them in the right direction e.g mac osx? brew.. good luck!
-# }}}
 # Functions {{{
 
 # N.B 1; also turns on bold mode
