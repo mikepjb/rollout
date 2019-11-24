@@ -2,6 +2,8 @@
 # vim: fdm=marker
 
 # TODO check arch linux for general recommendations
+# TODO download selecta & vim plugins for pathogen?
+# TODO make my vim theme a plugin too.
 
 # Functions {{{
 
@@ -259,6 +261,8 @@ vimrc=$(cat <<"EOF"
 syn on
 set nu autowrite hidden shiftwidth=2 tabstop=2 gdefault mouse=a
 set clipboard+=unnamedplus expandtab smarttab ignorecase smartcase
+set stl=--\ %1*%F%m%r%h%w%*\ %=\ %y\ -\ [%l,%c]\ [%L,%p%%] showtabline=1
+set fillchars=stlnc:\-,stl:\-,vert:\|
 setglobal tags=./tags;
 let g:ftplugin_sql_omni_key = '<Nop>' " ctrl+c is for escape, not completion.
 
