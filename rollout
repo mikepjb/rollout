@@ -81,13 +81,16 @@ echo "$(green '==>') Rollout ___o"
 # Read Arguments & Environment {{{
 
 platform=$(uname)
+theme="dark"
 # connected=$(check_network)
-check_network
+# check_network
 
 if [ ${#@} -ne 0 ]; then
   case $* in
     *--help*) printf -- '...help...\n'; exit 0;;
     *-h*) printf -- '...help...\n'; exit 0;;
+    *--light*) theme="light";;
+    *--dark*) theme="dark";;
   esac
 fi
 
@@ -104,7 +107,7 @@ fi
 # think.. godeps?
 
 deps='#basics
-tmux git jq java boot gimp rlwrap awk grep vim nvim sed
+tmux git jq java lein boot gimp rlwrap awk grep vim nvim sed ssh
 #languages
 clojure python ruby node bash
 #build-tools
@@ -114,7 +117,9 @@ htop
 #development-servers
 redis postgres mongo 
 #ui
-xterm openbox-session xrdb xdpyinfo xset setxkbmap
+xterm openbox-session xrdb xdpyinfo xset setxkbmap firefox chromium
+#photography
+darktable gthumb
 '
 
 echo "$(green '==>') Dependencies"
@@ -131,35 +136,82 @@ for dep in $deps; do
   fi
 done
 
+check_command tmux 2
+
 # TODO install clojure?
 # curl -O https://download.clojure.org/install/linux-install-1.10.1.489.sh
 # chmod +x linux-install-1.10.1.489.sh
 # sudo ./linux-install-1.10.1.489.sh
 
-# List of programs I'd like to have available (for dev):
-# tmux git jq java boot gimp rlwrap gcc make automake autoconf \
-# redis postgresql mongo htop openbox tmux neovim vim xterm \
-# awk xorg openssh firefox chromium google-chrome
-
-# List of programs required for Clojure development:
-# openjdk11 openjdk11-src lein clj
-
-# List of programs I'd like to have available (personal):
-# darkatable gthumb
-
-# pacman? apt? yum? use their repos?
+# TODO do I have openjdk11-src? or the src of my currently installed java?
 
 # }}}
 
 # Configuration
-# Tools/PATH {{{
+# Colors {{{
 
-echo '--> Do I have the basics?'
+# take vars describes here, put them into their respective configs
 
-check_command grep
-check_command vim
-check_command nvim
-check_command tmux 2
+if [ "$theme" = "dark" ]; then
+  printf -- "$(green '==>') Color\n"
+  printf -- "$(blue '  ->') Setting Lumo (dark) theme\n"
+  foreground=#fcfcfa
+  background=#2d2a2e
+  cursor=#fcfcfa
+  black=#383539
+  bright_black=#989599
+  red=#ff6188
+  bright_red=#ff89a6
+  green=#a9dc76
+  bright_green=#c5e0a9
+  yellow=#fc9867
+  bright_yellow=#ffd866
+  blue=#78dce8
+  bright_blue=#c9edf1
+  magenta=#ab9df2
+  bright_magenta=#b294bb
+  cyan=#78e8cf
+  bright_cyan=#c4f9ed
+  white=#c3c1c3
+  bright_white=#f8f8f2
+else
+  foreground=#444444
+  background=#eeeeee
+  cursor=#444444
+  black=#1d1e1a
+  bright_black=#7c7c7c
+  red=#800000
+  bright_red=#f44336
+  green=#365d2e
+  bright_green=#a8c960
+  yellow=#cf8f2e
+  bright_yellow=#cf8f2e
+  blue=#486ab4
+  bright_blue=#486ab4
+  magenta=#9933ff
+  bright_magenta=#8b1e8b
+  cyan=#486ab4
+  bright_cyan=#486ab4
+  white=#eeeeee
+  bright_white=#eeeeee
+fi
+
+echo '--> Does my shell have colors set?'
+echo '--> for X?'
+echo '--> for OSX?'
+echo '--> for Cygwin?'
+echo '--> for Powershell?'
+echo '--> for (neo)vim?'
+echo '--> for emacs?'
+
+# }}}
+# Font {{{
+
+terminus=$(fc-list : family | grep Terminus)
+
+if [ "$terminus" = '' ]; then
+  yellow "Terminus could not be found\n"
+fi
 
 # }}}
 # Locale {{{
@@ -172,8 +224,44 @@ echo '--> Check locale-gen?'
 #   ls /usr/share/kbd/consolefonts/ | grep 'ter-228b'
 # fi
 
-xresources=$(cat <<"EOF"
-something
+# TODO tmux.conf?
+# TODO if linux then do x stuff (xterm) .. osx can't use this..
+
+xresources=$(cat <<EOF
+XTerm*utf8: 1
+XTerm*geometry: 160x50
+XTerm*font: -*-terminus-medium-*-*-*-28-*-*-*-*-*-iso10646-1
+XTerm*titeInhibit: false
+XTerm*ScrollBar: false
+XTerm*ScrollKey: false
+XTerm*metaSendsEscape: true
+*background:  $background
+*foreground:  $foreground
+*cursorColor: $cursor
+*color0:      $black
+*color1:      $red
+*color2:      $green
+*color3:      $yellow
+*color4:      $blue
+*color5:      $magenta
+*color6:      $cyan
+*color7:      $white
+*color8:      $bright_black
+*color9:      $bright_red
+*color10:     $bright_green
+*color11:     $bright_yellow
+*color12:     $bright_blue
+*color13:     $bright_magenta
+*color14:     $bright_cyan
+*color15:     $bright_white
+xterm.*backarrowKey: false
+*ttyModes:         erase ^?
+*VT100.Translations: \
+        #override <Key>BackSpace: string(0x7f) \n\
+                  <Key>Delete:    string(0x1b) string("[3~")
+xterm*VT100.Translations: #override \
+                Ctrl Shift <Key>V:    insert-selection(CLIPBOARD) \n\
+                Ctrl Shift <Key>C:    copy-selection(CLIPBOARD)
 EOF
 )
 
@@ -194,6 +282,7 @@ exec openbox-session
 EOF
 )
 
+xrdb -merge <<< "$xresources"
 echo "$xinitrc" > test-xinitrc
 echo "$xresources" > test-xresources
 
@@ -257,72 +346,6 @@ echo "$bashrc" > test-bashrc
 # System {{{
 # TODO is systemctl/init available? if not then find a way to run stuff in the background
 # e.g ssh-agent
-# }}}
-# Font {{{
-
-terminus=$(fc-list : family | grep Terminus)
-
-if [ "$terminus" = '' ]; then
-  yellow "Terminus could not be found\n"
-fi
-
-# }}}
-# Colors {{{
-
-echo 'choose night or day'
-
-# take vars describes here, put them into their respective configs
-
-# TODO should be if --sun/--moon/--lumo etc (lumo by default for now)
-if true; then
-  echo 'Sun theme'
-# # Sun theme
-# *.foreground:   #fcfcfa
-# *.background:   #2d2a2e
-# *.cursorColor:  #fcfcfa
-# 
-# ! black
-# *.color0:       #383539
-# *.color8:       #989599
-# 
-# ! red
-# *.color1:       #ff6188
-# *.color9:       #ff89a6
-# 
-# ! green
-# *.color2:       #a9dc76
-# *.color10:      #c5e0a9
-# 
-# ! yellow
-# *.color3:       #fc9867
-# *.color11:      #ffd866
-# 
-# ! blue
-# *.color4:       #78dce8
-# *.color12:      #c9edf1
-# 
-# ! magenta
-# *.color5:       #ab9df2
-# *.color13:      #b294bb
-# 
-# ! cyan
-# *.color6:       #78e8cf
-# *.color14:      #c4f9ed
-# 
-# ! white
-# *.color7:       #c3c1c3
-# *.color15:      #f8f8f2
-fi
-
-
-echo '--> Does my shell have colors set?'
-echo '--> for X?'
-echo '--> for OSX?'
-echo '--> for Cygwin?'
-echo '--> for Powershell?'
-echo '--> for (neo)vim?'
-echo '--> for emacs?'
-
 # }}}
 # Git configuration (and others?) {{{
 
