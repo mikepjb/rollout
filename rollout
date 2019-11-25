@@ -395,11 +395,11 @@ git config --global --replace-all alias.ff 'pull --ff-only'
 git config --global --replace-all alias.co 'checkout'
 git config --global --replace-all alias.ci 'commit --verbose'
 git config --global --replace-all alias.di 'diff'
-git config --global --replace-all alias.dc 'diff --cache'
+git config --global --replace-all alias.dc 'diff --cached'
 git config --global --replace-all alias.dd 'diff --stat origin/develop HEAD'
 git config --global --replace-all alias.list 'config --global --list'
 git config --global --replace-all alias.amend 'commit --amend'
-git config --global --replace-all alias.ffa 'git fetch --all && git rebase origin/master'
+git config --global --replace-all alias.ffa 'fetch --all && git rebase origin/master'
 git config --global --replace-all alias.push-new 'push -u origin HEAD'
 git config --global --replace-all alias.ra "log --abbrev-commit --pretty=format:'%<(7)%C(yellow)%h %Cgreen%<(15)%cr%C(bold cyan)%<(17)<%an>%C(red)%d %Creset %s'"
 # }}}
