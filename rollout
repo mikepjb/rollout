@@ -3,7 +3,6 @@
 
 # TODO check arch linux for general recommendations
 # TODO download selecta & vim plugins for pathogen?
-# TODO make my vim theme a plugin too.
 
 # Functions {{{
 
@@ -128,7 +127,7 @@ if [ "$theme" = "dark" ]; then
   background=#2d2a2e
   cursor=#fcfcfa
   black=#383539
-  bright_black=#989599
+  bright_black=#787579
   red=#ff6188
   bright_red=#ff89a6
   green=#a9dc76
@@ -190,6 +189,7 @@ printf -- "$(yellow '  ->') I do not currently write to /etc/vconsole.conf $(yel
 
 xresources=$(cat <<EOF
 XTerm*utf8: 1
+XTerm*termName: xterm-256color
 XTerm*geometry: 160x50
 XTerm*font: -*-terminus-medium-*-*-*-28-*-*-*-*-*-iso10646-1
 XTerm*titeInhibit: false
@@ -292,8 +292,9 @@ inoremap <C-l> <space>=><space>command! PrettifyXML  :%!xmllint --format -
 
 command! TrimWhitespace :%s/\s\+$//e
 command! ClearPrefixWhitespace :%s/^\s\+//g
+command! SynID echo synIDattr(synID(line("."), col("."), 1), "name")
 
-colorscheme lumo
+colorscheme rollout
 
 augroup clojure
   au Syntax clojure nmap <buffer>  gd <Plug>FireplaceDjump
@@ -302,6 +303,51 @@ EOF
 )
 
 write_and_save ~/.vimrc "$vimrc"
+
+rollout=$(cat <<"EOF"
+hi clear
+if exists("syntax_on")
+  syntax reset
+endif
+let g:colors_name = "rollout"
+
+hi Number ctermfg=2
+hi Function ctermfg=1
+hi String ctermfg=11
+hi Identifier ctermfg=3
+hi Special ctermfg=3
+hi Preproc ctermfg=1
+hi Type ctermfg=2
+hi Comment ctermfg=7
+hi TODO ctermfg=4 ctermbg=NONE
+hi LineNr ctermfg=7 ctermbg=NONE
+hi CursorLine ctermfg=7 ctermbg=NONE
+hi Visual ctermfg=NONE ctermbg=0
+hi Error ctermfg=1 ctermbg=NONE
+hi ErrorMsg ctermfg=1 ctermbg=NONE
+hi WarningMsg ctermfg=1 ctermbg=NONE
+hi NonText ctermfg=1 ctermbg=NONE
+hi Delimiter ctermfg=6 ctermbg=NONE
+hi MatchParen ctermfg=3 ctermbg=NONE
+hi Operator ctermfg=1 ctermbg=NONE
+hi PMenu ctermfg=NONE ctermbg=0
+hi PMenuSel ctermfg=6 ctermbg=NONE
+hi PMenuSbar ctermfg=6 ctermbg=0
+hi PMenuThumb ctermfg=NONE ctermbg=6
+hi Folded ctermfg=7 ctermbg=0
+hi Quote ctermfg=6 ctermbg=8
+hi FoldedColumn ctermfg=6 ctermbg=8
+hi StatusLine ctermfg=15 ctermbg=NONE cterm=NONE
+hi StatusLineNC ctermfg=7 ctermbg=NONE cterm=NONE
+hi VertSplit ctermfg=7 ctermbg=NONE cterm=NONE
+hi User1 ctermfg=11 ctermbg=NONE cterm=NONE
+
+set stl=--\ %1*%F%m%r%h%w%*\ %=\ %y\ -\ [%l,%c]\ [%L,%p%%] showtabline=1
+EOF
+)
+
+mkdir -p ~/.vim/colors
+write_and_save ~/.vim/colors/rollout.vim "$rollout"
 
 # }}}
 # Shell {{{
@@ -353,7 +399,7 @@ write_and_save ~/.bashrc "$bashrc"
 
 tmuxconf=$(cat <<"EOF"
 set -g status-position bottom
-set -g default-terminal "tmux-256color"
+set -g default-terminal "screen-256color"
 set -g default-command $SHELL
 set -g history-limit 100000
 set -g mouse on
