@@ -95,7 +95,7 @@ clojure python ruby node bash
 #build-tools
 gcc make automake autoconf basename
 #development-tools
-htop ssh-agent ssh-keygen rg xmllint
+htop ssh-agent ssh-keygen rg xmllint tig
 #development-servers
 redis-server postgres mongo
 #ui
