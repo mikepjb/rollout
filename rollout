@@ -260,11 +260,12 @@ fi
 vimrc=$(cat <<"EOF"
 syn on
 filetype plugin indent on
-set nu autowrite hidden shiftwidth=2 tabstop=2 gdefault mouse=a
+set nocompatible nu autowrite hidden shiftwidth=2 tabstop=2 gdefault mouse=a
 set clipboard=unnamed,unnamedplus expandtab smarttab ignorecase smartcase
 set stl=--\ %1*%F%m%r%h%w%*\ %=\ %y\ -\ [%l,%c]\ [%L,%p%%] showtabline=1
 set fillchars=stlnc:\-,stl:\-,vert:\|
 setglobal tags=./tags;
+runtime macros/matchit.vim
 let g:ftplugin_sql_omni_key = '<Nop>' " ctrl+c is for escape, not completion.
 
 let mapleader= ' '
