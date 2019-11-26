@@ -64,6 +64,14 @@ function write_and_save { # write_and_save ~/.bashrc "$bashrc"
   fi
 }
 
+function include {
+  name=$(echo $1 | cut -d/ -f2)
+  echo "$(blue '  ->') looking for ~/.vim/bundle/$name"
+  if [ ! -d "$HOME/.vim/bundle/$name" ]; then
+    git clone "https://github.com/$1.git" "$HOME/.vim/bundle/$name"
+  fi
+}
+
 # TODO trap exit_code and revert file changes if an error occurs
 
 # }}}
@@ -258,7 +266,18 @@ if ! diff $(which vi) $(which vim) >/dev/null; then
   sudo cp $(which vim) /usr/local/bin/vi
 fi
 
+if [ ! -f ~/.vim/autoload/pathogen.vim ]; then
+  mkdir -p ~/.vim/autoload ~/.vim/bundle && \
+    curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+fi
+
+include 'tpope/vim-fireplace'
+include 'tpope/vim-fugitive'
+include 'mikepjb/vim-pair'
+include 'mikepjb/vim-fold'
+
 vimrc=$(cat <<"EOF"
+execute pathogen#infect()
 syn on
 filetype plugin indent on
 set nocompatible nu autowrite hidden shiftwidth=2 tabstop=2 gdefault mouse=a
@@ -268,6 +287,7 @@ set fillchars=stlnc:\-,stl:\-,vert:\|
 setglobal tags=./tags;
 runtime macros/matchit.vim
 let g:ftplugin_sql_omni_key = '<Nop>' " ctrl+c is for escape, not completion.
+
 
 let mapleader= ' '
 nnoremap Y y$
@@ -294,7 +314,7 @@ inoremap <C-l> <space>=><space>command! PrettifyXML  :%!xmllint --format -
 
 command! TrimWhitespace :%s/\s\+$//e
 command! ClearPrefixWhitespace :%s/^\s\+//g
-command! SynID echo synIDattr(synID(line("."), col("."), 1), "name")
+nnoremap zS :echo join(reverse(map(synstack(line('.'), col('.')), 'synIDattr(v:val,"name")')),' ')<cr>
 
 colorscheme rollout
 
