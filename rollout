@@ -243,6 +243,7 @@ exec openbox-session
 EOF
 )
 
+# TODO am I running inside a display? xhost not present on arch == unreliable
 xrdb -merge <<< "$xresources"
 write_and_save ~/.xinitrc "$xinitrc"
 write_and_save ~/.xresources "$xresources"
@@ -316,6 +317,7 @@ hi Number ctermfg=2
 hi Function ctermfg=1
 hi String ctermfg=11
 hi Identifier ctermfg=3
+hi Keyword ctermfg=1
 hi Special ctermfg=3
 hi Preproc ctermfg=1
 hi Type ctermfg=2
