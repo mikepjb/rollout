@@ -297,6 +297,7 @@ nnoremap <C-q> :quit<cr>
 nnoremap <Leader>e :e <C-R>=expand("%:p:h") . '/'<CR>
 nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>f :FZF<cr>
+nnoremap <leader>i :e ~/src/rollout/rollout<cr>
 imap <C-c> <esc>
 
 map <C-h> <C-w><C-h>
@@ -309,11 +310,13 @@ cnoremap <C-a> <Home>
 cnoremap <C-e> <End>
 inoremap <C-f> <Right>
 inoremap <C-b> <Left>
-inoremap <C-d> <Delete>        command! PrettifyJSON :%!python -m json.tool
-inoremap <C-l> <space>=><space>command! PrettifyXML  :%!xmllint --format -
+inoremap <C-d> <Delete>
+inoremap <C-l> <space>=><space>
 
 command! TrimWhitespace :%s/\s\+$//e
 command! ClearPrefixWhitespace :%s/^\s\+//g
+command! PrettifyJSON :%!python -m json.tool
+command! PrettifyXML  :%!xmllint --format -
 nnoremap zS :echo join(reverse(map(synstack(line('.'), col('.')), 'synIDattr(v:val,"name")')),' ')<cr>
 
 colorscheme rollout
