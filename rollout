@@ -3,6 +3,7 @@
 
 # TODO check arch linux for general recommendations
 # TODO download selecta & vim plugins for pathogen?
+# TODO make sure gmail/good email client opens when firefox click email address
 
 # Functions {{{
 
@@ -391,14 +392,19 @@ export XDG_CONFIG_HOME=$HOME/.config
 export PAGER='less -S'
 export SSH_AUTH_SOCK=$HOME/.ssh/ssh-agent.socket
 export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin
+export CDPATH=$HOME/src
+export NVM_DIR="$HOME/.config/nvm"
+export NVM_SOURCE='/usr/share/nvm' # AUR nvm package
 
-alias gr='git rev-parse --show-toplevel || echo "."'
+alias gr='cd $(git rev-parse --show-toplevel || echo ".")'
 alias ..='cd ..'
 alias t='tmux attach -t vty || tmux new -s vty'
 alias de='export $(egrep -v "^#" .env | xargs)'
 alias xclip='xclip -sel clip'
 alias jv="jq -C | less -R"
 alias ssha="ssh-agent -a $SSH_AUTH_SOCK && ssh-add ~/.ssh/id_rsa"
+
+[ -s "$NVM_SOURCE/nvm.sh" ] && . "$NVM_SOURCE/nvm.sh"
 
 viw() { vi `which "$1"`; }
 pp() { until ping -c1 1.1.1.1 >/dev/null 2>&1; do :; done; }
