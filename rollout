@@ -4,6 +4,7 @@
 # TODO check arch linux for general recommendations
 # TODO download selecta & vim plugins for pathogen?
 # TODO make sure gmail/good email client opens when firefox click email address
+# TODO make cygwin compat (no sudo, detect if X11/has display for xrdb etc on urxvt/mintty)
 
 # Functions {{{
 
@@ -200,9 +201,9 @@ xresources=$(cat <<EOF
 XTerm*utf8: 1
 XTerm*termName: xterm-256color
 XTerm*geometry: 160x50
-XTerm*font: -*-terminus-medium-*-*-*-28-*-*-*-*-*-iso10646-1
+*font: -*-terminus-medium-*-*-*-12-*-*-*-*-*-iso10646-1
 XTerm*titeInhibit: false
-XTerm*ScrollBar: false
+*scrollBar: false
 XTerm*ScrollKey: false
 XTerm*metaSendsEscape: true
 *background:  $background
@@ -238,11 +239,11 @@ EOF
 xinitrc=$(cat <<"EOF"
 LANG='en_GB.UTF-8'
 
-[[ -f ~/.xresources ]] && xrdb -merge ~/.xresources
+# [[ -f ~/.xresources ]] && xrdb -merge ~/.xresources
 
-if [ `xdpyinfo | awk '/dimensions/{print $2}'` = '3840x2160' ]; then
-  xrdb -merge <<< 'Xft.dpi: 144'
-fi
+# if [ `xdpyinfo | awk '/dimensions/{print $2}'` = '3840x2160' ]; then
+#   xrdb -merge <<< 'Xft.dpi: 144'
+# fi
 
 xset r rate 200 25
 
@@ -253,7 +254,7 @@ EOF
 )
 
 # TODO am I running inside a display? xhost not present on arch == unreliable
-xrdb -merge <<< "$xresources"
+# xrdb -merge <<< "$xresources"
 write_and_save ~/.xinitrc "$xinitrc"
 write_and_save ~/.xresources "$xresources"
 
@@ -264,7 +265,7 @@ printf -- "$(green '==>') Editor\n"
 if ! diff $(which vi) $(which vim) >/dev/null; then
   echo "$(blue '  ->') vi and vim are not the same $(yellow '(mismatch)')"
   echo "$(blue '  ->') attempting to copy vim binary to /usr/local/bin..."
-  sudo cp $(which vim) /usr/local/bin/vi
+  # sudo cp $(which vim) /usr/local/bin/vi
 fi
 
 if [ ! -f ~/.vim/autoload/pathogen.vim ]; then
@@ -466,8 +467,10 @@ write_and_save ~/.tmux.conf "$tmuxconf"
 printf -- "$(green '==>') Git Aliases\n"
 
 git config --global --replace-all core.editor 'vim'
+git config --global --replace-all core.autocrlf false
 git config --global --replace-all alias.aa 'add --all'
 git config --global --replace-all alias.br 'branch --sort=committerdate'
+git config --global --replace-all alias.st 'status'
 git config --global --replace-all alias.count 'shortlog -sn'
 git config --global --replace-all alias.ff 'pull --ff-only'
 git config --global --replace-all alias.co 'checkout'
