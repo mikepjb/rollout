@@ -386,6 +386,11 @@ printf -- "$(green '==>') Shell\n"
 # CDPATH with completion?
 bashrc=$(cat <<"EOF"
 shopt -s nocaseglob #case insensitive completion
+
+if shopt | grep 'completion_strip_exe' >/dev/null; then
+  shopt -s completion_strip_exe
+fi
+
 [[ $- =~ i ]] && stty -ixoff -ixon # Disable CTRL-S and CTRL-Q
 
 export EDITOR=vim

@@ -4,6 +4,8 @@ Documenting details about target systems that should be addressed.
 
 ## Windows & Cygwin
 
+TODO ensure x server starts at windows startup (so urxvt etc can launch)
+
 a few packages need to be installed that are not default including:
 
   - openssh
