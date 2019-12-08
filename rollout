@@ -277,8 +277,8 @@ include 'tpope/vim-fireplace'
 include 'tpope/vim-fugitive'
 include 'mikepjb/vim-pair'
 include 'mikepjb/vim-fold'
-include 'othree/yajs.vim'
-include 'mxw/vim-jsx'
+include 'pangloss/vim-javascript'
+include 'MaxMEllon/vim-jsx-pretty'
 
 vimrc=$(cat <<"EOF"
 execute pathogen#infect()
