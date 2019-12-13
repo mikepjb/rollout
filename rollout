@@ -41,10 +41,23 @@ function check_command {
       v_string=$(java --version)
       if [ "${v_string:0:10}" != "$2" ]; then
         printf -- "$(yellow java is version "${v_string:0:10}", not $2)\n"
-        # TODO exit?
       fi
     fi
   fi
+}
+
+function check_completion {
+  for script in /etc/bashrc /etc/bash.bashrc $HOME/.bashrc; do
+    if [ -f $script ]; then
+      if grep bash_completion $script >/dev/null; then
+        printf -- "$(yellow '   ->') bash-completion $(yellow "($script contains bash_completion)")\n"
+        return 0
+      fi
+    fi
+  done
+  printf -- "$(red '   ->') bash-completion $(red '(no reference found)')\n"
+  printf -- "did not find it :(\n"
+  return 1
 }
 
 function write_and_save { # write_and_save ~/.bashrc "$bashrc"
@@ -127,6 +140,9 @@ for dep in $deps; do
 done
 
 check_command tmux 2
+
+echo "$(blue '  ->') shell"
+check_completion
 
 # }}}
 # Colors {{{
