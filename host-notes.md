@@ -32,3 +32,27 @@ also be aware that urxvt PATH is not the same as mintty
 
 installing nodejs (LTS) also provides chocolatey, python2 and some visual studio libs to compile some node C++ extensions.
 
+# Android
+
+1. Rooting
+  (refer to XDA developers site for source of truth)
+  - Using Odin installer (3.13.1)
+  - Unlock OEM mode on phone
+  - Boot into download mode (bixby/vol down/power)
+  - Odin (AP mode) install TWRP tar
+  - Wait ready to hold vol up, bixby, power up to go TWRP (avoid stock rom wiping it)
+  - install TWRP, wipe dalvik cache etc
+  - install magisk v20.1
+  - boot (and wait a while..)
+
+2. Keyboard setup
+  - find out device vendor/product id
+    su
+    cat /proc/bus/input/devices
+  - open termux
+  - su
+    mount -o rw,remount /system
+    /data/data/com.termux/files/usr/bin/vim /system/usr/keylayout/x.kl
+  - Create/edit the keyboard layout for your corresponding bluetooth keyboard
+  - disconnect/reconnect keyboard to update mappings.
+  
