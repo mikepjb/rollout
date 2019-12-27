@@ -290,11 +290,38 @@ fi
 EOF
 )
 
+termux_colours=$(cat <<EOF
+background=$background
+foreground=$foreground
+cursor=$cursor
+color0=$black
+color1=$red
+color2=$green
+color3=$yellow
+color4=$blue
+color5=$magenta
+color6=$cyan
+color7=$white
+color8=$bright_black
+color9=$bright_red
+color10=$bright_green
+color11=$bright_yellow
+color12=$bright_blue
+color13=$bright_magenta
+color14=$bright_cyan
+color15=$bright_white
+EOF
+)
 # TODO am I running inside a display? xhost not present on arch == unreliable
 xrdb -merge <<< "$xresources"
 
 write_and_save ~/.xinitrc "$xinitrc"
 write_and_save ~/.Xresources "$xresources"
+
+if [ `uname -o` = "Android" ]; then
+  mkdir -p ~/.termux
+  write_and_save ~/.termux/colors.properties "$termux_colours"
+fi
 
 # }}}
 # Editor {{{
