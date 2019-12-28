@@ -295,6 +295,10 @@ include 'mikepjb/vim-pair'
 include 'mikepjb/vim-fold'
 include 'pangloss/vim-javascript'
 include 'MaxMEllon/vim-jsx-pretty'
+include 'alvan/vim-closetag'
+include 'mattn/emmet-vim'
+include 'mikepjb/vim-lsc'
+include 'ajh17/VimCompletesMe'
 
 vimrc=$(cat <<"EOF"
 execute pathogen#infect()
@@ -302,6 +306,8 @@ syn on
 filetype plugin indent on
 set nocompatible nu autowrite hidden shiftwidth=2 tabstop=2 gdefault mouse=a
 set clipboard=unnamed,unnamedplus expandtab smarttab ignorecase smartcase
+set shortmess+=c iskeyword+=-
+" set completeopt=menu,menuone,noinsert,noselect
 set stl=--\ %1*%F%m%r%h%w%*\ %=\ %y\ -\ [%l,%c]\ [%L,%p%%] showtabline=1
 set fillchars=stlnc:\-,stl:\-,vert:\|
 setglobal tags=./tags;
@@ -341,9 +347,32 @@ nnoremap zS :echo join(reverse(map(synstack(line('.'), col('.')), 'synIDattr(v:v
 
 colorscheme rollout
 
+set cot+=preview
+
 augroup clojure
   au Syntax clojure nmap <buffer>  gd <Plug>FireplaceDjump
 augroup end
+
+let g:lsc_server_commands = {
+  \ 'html': {
+  \   'command': 'tailwindcss-language-server --stdio',
+  \   'suppress_stderr': v:true,
+  \   },
+  \ 'javascript': {
+  \   'command': 'typescript-language-server --stdio',
+  \   'log_level': -1,
+  \   'suppress_stderr': v:true,
+  \   },
+  \ }
+let g:lsc_enable_autocomplete  = v:true
+
+let g:lsc_auto_map = {
+ \  'GoToDefinition': 'gd',
+ \  'FindReferences': 'gr',
+ \  'Rename': 'gR',
+ \  'ShowHover': 'K',
+ \  'Completion': 'omnifunc',
+ \}
 EOF
 )
 
