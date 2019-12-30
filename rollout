@@ -360,8 +360,7 @@ let g:lsc_server_commands = {
   \   'suppress_stderr': v:true,
   \   },
   \ 'javascript': {
-  \   'command': 'typescript-language-server --stdio',
-  \   'log_level': -1,
+  \   'command': 'tailwindcss-language-server --stdio',
   \   'suppress_stderr': v:true,
   \   },
   \ }
