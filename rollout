@@ -307,7 +307,8 @@ syn on
 filetype plugin indent on
 set nocompatible nu autowrite hidden shiftwidth=2 tabstop=2 gdefault mouse=a
 set clipboard=unnamed,unnamedplus expandtab smarttab ignorecase smartcase
-set shortmess+=c iskeyword+=-
+set shortmess+=c iskeyword+=- path+=** wildmenu
+set wildignore+=**/node_modules/**
 " set completeopt=menu,menuone,noinsert,noselect
 set stl=--\ %1*%F%m%r%h%w%*\ %=\ %y\ -\ [%l,%c]\ [%L,%p%%] showtabline=1
 set fillchars=stlnc:\-,stl:\-,vert:\|
@@ -322,8 +323,7 @@ nnoremap Q @q
 nnoremap gb :Gblame<cr>
 nnoremap <C-q> :quit<cr>
 nnoremap <Leader>e :e <C-R>=expand("%:p:h") . '/'<CR>
-nnoremap <leader>b :Buffers<cr>
-nnoremap <leader>f :FZF<cr>
+nnoremap <leader>f :find<space>
 nnoremap <leader>i :e ~/src/rollout/rollout<cr>
 imap <C-c> <esc>
 
