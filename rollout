@@ -1,10 +1,12 @@
 #!/bin/sh -e
 # vim: fdm=marker
 
+# TODO xsetroot -solid "#cbd5e0"
 # TODO check arch linux for general recommendations
 # TODO download selecta & vim plugins for pathogen?
 # TODO make sure gmail/good email client opens when firefox click email address
 # TODO make cygwin compat (no sudo, detect if X11/has display for xrdb etc on urxvt/mintty)
+# TODO trap exit_code and revert file changes if an error occurs
 
 # Functions {{{
 
@@ -150,27 +152,27 @@ check_completion
 printf -- "$(green '==>') Color\n"
 if [ "$theme" = "dark" ]; then
   printf -- "$(blue '  ->') Setting Lumo (dark) theme\n"
-  foreground=#fcfcfa
-  background=#2d2a2e
-  cursor=#fcfcfa
-  black=#383539
-  bright_black=#787579
-  red=#ff6188
-  bright_red=#ff89a6
-  green=#a9dc76
-  bright_green=#c5e0a9
-  yellow=#fc9867
-  bright_yellow=#ffd866
-  blue=#78dce8
-  bright_blue=#c9edf1
-  magenta=#ab9df2
-  bright_magenta=#b294bb
-  cyan=#78e8cf
-  bright_cyan=#c4f9ed
-  white=#c3c1c3
-  bright_white=#f8f8f2
+  foreground=#f7fafc
+  background=#1a202c
+  cursor=#1a202c
+  black=#2d3748
+  bright_black=#718096
+  red=#f56565
+  bright_red=#feb2b2
+  green=#c6f6d5
+  bright_green=#f0fff4
+  yellow=#faf089
+  bright_yellow=#fefcbf
+  blue=#bee3f8
+  bright_blue=#ebfff8
+  magenta=#ed64a6
+  bright_magenta=#fbb6ce
+  cyan=#4fd1c5
+  bright_cyan=#b2f5ea
+  white=#f7fafc
+  bright_white=#ffffff
 else
-  printf -- "$(blue '  ->') Setting dark theme variables\n"
+  printf -- "$(blue '  ->') Setting light theme variables\n"
   foreground=#444444
   background=#eeeeee
   cursor=#444444
@@ -323,6 +325,7 @@ nnoremap Q @q
 nnoremap gb :Gblame<cr>
 nnoremap <C-q> :quit<cr>
 nnoremap <Leader>e :e <C-R>=expand("%:p:h") . '/'<CR>
+nnoremap <leader>d :LSClientShowHover<CR>
 nnoremap <leader>f :find<space>
 nnoremap <leader>i :e ~/src/rollout/rollout<cr>
 imap <C-c> <esc>
@@ -387,20 +390,20 @@ if exists("syntax_on")
 endif
 let g:colors_name = "rollout"
 
-hi Normal ctermfg=5 " ex line text & some special chars :? etc?
-hi Constant ctermfg=1
+hi Normal ctermfg=NONE " ex line text & some special chars :? etc?
+hi Constant ctermfg=5
 hi PreProc ctermfg=1
 hi Repeat ctermfg=1
 hi Ignore ctermfg=1
 hi Number ctermfg=2
-hi Function ctermfg=1
-hi String ctermfg=11
+hi Function ctermfg=6
+hi String ctermfg=7
 hi Identifier ctermfg=3
 hi Keyword ctermfg=1
 hi Special ctermfg=3
 hi Preproc ctermfg=1
 hi Type ctermfg=2
-hi Comment ctermfg=7
+hi Comment ctermfg=8
 hi TODO ctermfg=4 ctermbg=NONE
 hi LineNr ctermfg=7 ctermbg=NONE
 hi CursorLine ctermfg=7 ctermbg=NONE
@@ -420,9 +423,16 @@ hi Folded ctermfg=7 ctermbg=0
 hi Quote ctermfg=6 ctermbg=8
 hi FoldedColumn ctermfg=6 ctermbg=8
 hi StatusLine ctermfg=15 ctermbg=NONE cterm=NONE
-hi StatusLineNC ctermfg=7 ctermbg=NONE cterm=NONE
+hi StatusLineNC ctermfg=8 ctermbg=NONE cterm=NONE
 hi VertSplit ctermfg=7 ctermbg=NONE cterm=NONE
-hi User1 ctermfg=11 ctermbg=NONE cterm=NONE
+hi User1 ctermfg=2 ctermbg=NONE cterm=NONE
+
+hi! htmlTagName ctermfg=6
+hi! htmlSpecialTagName ctermfg=6
+hi! htmlTag ctermfg=NONE
+hi! htmlTagN ctermfg=NONE
+hi! htmlEndTag ctermfg=NONE
+hi! link htmlH1 Normal
 
 " Common groups that link to default highlighting.
 " You can specify other highlighting easily.
