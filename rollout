@@ -62,6 +62,11 @@ function check_completion {
 function write_and_save { # write_and_save ~/.bashrc "$bashrc"
   name=$(basename "$1")
   echo "$(blue '  ->') checking if $1 matches..."
+  if [ -L "$1" ]; then
+      echo "$(yellow '  ->') $1 exists and is a softlink, removing.."
+      unlink $1
+  fi
+
   if [ -f "$1" ]; then
     if [ "$(cat $1)" != "$2" ]; then
       echo "$(blue '  ->') $1 does not match, backing up to ~/.config/backup/$name"
