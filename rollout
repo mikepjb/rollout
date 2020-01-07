@@ -27,9 +27,6 @@ function magenta { printf -- "$magenta_code$*$reset_code"; }
 function check_command {
   if [ ! $(command -v $1) ]; then
     printf -- "$(yellow You don\'t seem to have $1 installed.)\n"
-    # exit 127 # TODO consider making this a fail
-  # else
-  #  echo "$1 is installed."
   fi
 
   if [ "$2" != "" ]; then # we are checking for version
@@ -90,7 +87,6 @@ function include {
   fi
 }
 
-# TODO trap exit_code and revert file changes if an error occurs
 
 # }}}
 # Start {{{
