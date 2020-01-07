@@ -1,0 +1,12 @@
+#!/bin/sh -e
+
+if [ ! $(cat /etc/lsb-release | grep 'Arch Linux') ]; then
+  echo 'This script is only supposed to run on Arch Linux, exiting...'
+  exit 1
+fi
+
+sudo pacman -Sy --noconfirm --needed \
+  gvim \
+  # needed to check if rollout is in UI before using xrdb
+  xorg-xhost \
+  xterm
