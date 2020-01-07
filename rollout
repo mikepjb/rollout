@@ -33,9 +33,8 @@ function check_command {
   if [ "$2" != "" ]; then # we are checking for version
     if [ "$1" = 'tmux' ]; then
       v_string=$(tmux -V)
-      if [ "${v_string:5:1}" != "$2" ]; then
-        printf -- "$(red tmux is version "${v_string:5:1}", not $2)\n"
-        exit 127
+      if [ "${v_string:5:1}" -lt "$2" ]; then
+        printf -- "$(red tmux is version "${v_string:5:1}", $2 is preferred)\n"
       fi
     elif [ "$1" = 'java' ]; then
       v_string=$(java --version)
