@@ -217,11 +217,28 @@ echo '--> Check locale-gen?'
 
 printf -- "$(yellow '  ->') I do not currently write to /etc/vconsole.conf $(yellow '(not implemented)')\n"
 
+# TODO check for terminus too otherwise.. what is a safe choice? can I just say default mono?
+
+xterm_text_size=12
+dpi=70
+
+if [ $(command -v xdpyinfo) ] && [ $(command -v awk) ]; then
+  if [ `xdpyinfo | awk '/dimensions/{print $2}'` = '3840x2160' ]; then
+    printf -- "$(blue '  ->') HiDPI screen detected, adjusting dpi & xterm text size\n"
+    dpi=144
+    xterm_text_size=28
+  fi
+else
+  printf -- "$(yellow '  ->') xdpyinfo and/or awk are not present so I can't check your resolution.\n"
+fi
+
+
 xresources=$(cat <<EOF
+Xft.dpi: $dpi
 XTerm*utf8: 1
 XTerm*termName: xterm-256color
 XTerm*VT100.geometry: 160x50
-*font: -*-terminus-medium-*-*-*-12-*-*-*-*-*-iso10646-1
+*font: -*-terminus-medium-*-*-*-$xterm_text_size-*-*-*-*-*-iso10646-1
 XTerm*titeInhibit: false
 XTerm*ScrollBar: false
 XTerm*ScrollKey: false
@@ -260,10 +277,6 @@ xinitrc=$(cat <<"EOF"
 LANG='en_GB.UTF-8'
 
 [[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
-
-if [ `xdpyinfo | awk '/dimensions/{print $2}'` = '3840x2160' ]; then
-  xrdb -merge <<< 'Xft.dpi: 144'
-fi
 
 xset r rate 200 25
 
