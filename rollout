@@ -325,6 +325,7 @@ nnoremap <Leader>e :e <C-R>=expand("%:p:h") . '/'<CR>
 nnoremap <leader>d :LSClientShowHover<CR>
 nnoremap <leader>f :find<space>
 nnoremap <leader>i :e ~/src/rollout/rollout<cr>
+nnoremap <leader>b :b<space>
 imap <C-c> <esc>
 
 map <C-h> <C-w><C-h>
