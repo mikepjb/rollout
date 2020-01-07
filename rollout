@@ -219,7 +219,7 @@ XTerm*termName: xterm-256color
 XTerm*geometry: 160x50
 *font: -*-terminus-medium-*-*-*-12-*-*-*-*-*-iso10646-1
 XTerm*titeInhibit: false
-*scrollBar: false
+XTerm*ScrollBar: false
 XTerm*ScrollKey: false
 XTerm*metaSendsEscape: true
 *background:  $background
