@@ -7,6 +7,7 @@
 # TODO make sure gmail/good email client opens when firefox click email address
 # TODO make cygwin compat (no sudo, detect if X11/has display for xrdb etc on urxvt/mintty)
 # TODO trap exit_code and revert file changes if an error occurs
+# TODO check min version for tmux and warn (do not fail)
 
 # Functions {{{
 
