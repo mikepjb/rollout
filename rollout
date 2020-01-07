@@ -220,7 +220,7 @@ printf -- "$(yellow '  ->') I do not currently write to /etc/vconsole.conf $(yel
 xresources=$(cat <<EOF
 XTerm*utf8: 1
 XTerm*termName: xterm-256color
-XTerm*geometry: 160x50
+XTerm*VT100.geometry: 160x50
 *font: -*-terminus-medium-*-*-*-12-*-*-*-*-*-iso10646-1
 XTerm*titeInhibit: false
 XTerm*ScrollBar: false
