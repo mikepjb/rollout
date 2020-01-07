@@ -258,11 +258,11 @@ EOF
 xinitrc=$(cat <<"EOF"
 LANG='en_GB.UTF-8'
 
-# [[ -f ~/.xresources ]] && xrdb -merge ~/.xresources
+[[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
 
-# if [ `xdpyinfo | awk '/dimensions/{print $2}'` = '3840x2160' ]; then
-#   xrdb -merge <<< 'Xft.dpi: 144'
-# fi
+if [ `xdpyinfo | awk '/dimensions/{print $2}'` = '3840x2160' ]; then
+  xrdb -merge <<< 'Xft.dpi: 144'
+fi
 
 xset r rate 200 25
 
@@ -273,9 +273,10 @@ EOF
 )
 
 # TODO am I running inside a display? xhost not present on arch == unreliable
-# xrdb -merge <<< "$xresources"
+xrdb -merge <<< "$xresources"
+
 write_and_save ~/.xinitrc "$xinitrc"
-write_and_save ~/.xresources "$xresources"
+write_and_save ~/.Xresources "$xresources"
 
 # }}}
 # Editor {{{
