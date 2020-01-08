@@ -10,3 +10,5 @@ sudo pacman -Sy --noconfirm --needed \
   # needed to check if rollout is in UI before using xrdb
   xorg-xhost \
   xterm
+
+# usbutils # provides lsusb

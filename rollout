@@ -3,7 +3,6 @@
 
 # TODO xsetroot -solid "#cbd5e0"
 # TODO check arch linux for general recommendations
-# TODO download selecta & vim plugins for pathogen?
 # TODO make sure gmail/good email client opens when firefox click email address
 # TODO make cygwin compat (no sudo, detect if X11/has display for xrdb etc on urxvt/mintty)
 # TODO trap exit_code and revert file changes if an error occurs
