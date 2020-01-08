@@ -1,0 +1,43 @@
+#!/bin/sh -e
+
+windows_image=$HOME/.windows-10.img
+
+function deps {
+  sudo pacman -S qemu
+}
+
+function create_system {
+  qemu-img create -f raw $windows_image 50G
+}
+
+function launch_system {
+  qemu-system-x86_64 -enable-kvm -m 8G -drive format=raw,file=$windows_image
+}
+
+function main {
+  if [ ! $(command -v qemu-img) ]; then
+    echo 'no qemu found, installing..'
+    deps
+  fi
+
+  if [ ! -f $windows_image ]; then
+    echo 'no windows image file found, creating..'
+    create_system
+  fi
+
+  launch_system
+}
+
+# lsusb, grep for Windows 10.. save bus/addr numbers
+# sudo chmod a+w /dev/bus/usb/003/064
+# .. setup with usb
+
+# setup where you haven't installed windows yet - then press esc and choose usb and follow boot process
+# qemu-system-x86_64 -enable-kvm -m 2G -drive format=raw,file=$HOME/.windows-10.img -device usb-ehci,id=usb,bus=pci.0,addr=0x4 -device usb-host,hostbus=2,hostaddr=3 -boot menu=on
+
+# Run normally after initial installation
+# qemu-system-x86_64 -enable-kvm -m 2G -drive format=raw,file=$HOME/.windows-10.img
+
+# can we automate shit like caps as ctrl? can we be bothered?
+
+main
