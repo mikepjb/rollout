@@ -40,4 +40,8 @@ function main {
 
 # can we automate shit like caps as ctrl? can we be bothered?
 
+# ctrl as caps from running powershell admin from:
+# https://mavjs.org/post/swap-ctrl-and-capslock-on-windows
+# note: swaps left ctrl for caps lock too..
+
 main
