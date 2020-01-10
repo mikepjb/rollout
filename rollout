@@ -55,7 +55,6 @@ function check_completion {
   done
   printf -- "$(red '   ->') bash-completion $(red '(no reference found)')\n"
   printf -- "did not find it :(\n"
-  return 1
 }
 
 function write_and_save { # write_and_save ~/.bashrc "$bashrc"
