@@ -200,11 +200,42 @@ printf -- "$(yellow '  ->') write vim/neovim color files $(yellow '(not implemen
 # Font {{{
 printf -- "$(green '==>') Font\n"
 
-terminus=$(fc-list : family | grep Terminus)
+terminus=$(fc-list : family | grep 'xos4 Terminus')
+
+terminus_patch=$(cat <<"EOF"
+--- a/75-yes-terminus.conf	2019-01-01 19:32:47.000000000 +0100
++++ b/75-yes-terminus.conf	2019-01-01 19:41:28.323308293 +0100
+@@ -5,7 +5,7 @@
+  <selectfont>
+   <acceptfont>
+    <pattern>
+-     <patelt name="family"><string>Terminus</string></patelt>
++     <patelt name="family"><string>xos4 Terminus</string></patelt>
+    </pattern>
+   </acceptfont>
+  </selectfont>
+EOF
+)
 
 if [ "$terminus" = '' ]; then
-  printf -- "$(red '  ->') Terminus font could not be found using fc-list $(red '(missing)')\n"
-  printf -- "$(yellow '  ->') We could have chosen a backup font.. $(yellow '(not implemented)')\n"
+  printf -- "$(yellow '  ->') Terminus font could not be found using fc-list $(red '(missing)')\n"
+  printf -- "$(blue '  ->') Attempting to source from sourceforce.net..\n"
+
+  mkdir -p /tmp/terminus-font && cd /tmp/terminus-font
+  pkgver=4.48
+  pkgname="terminus-font-$pkgver.tar.gz"
+  curl -LSso ./$pkgname https://downloads.sourceforge.net/project/terminus-font/terminus-font-$pkgver/$pkgname
+  tar -zxf $pkgname
+  cd terminus-font-$pkgver
+  chmod +x configure
+  patch -p1 <<< "$terminus_patch"
+
+  ./configure \
+    --prefix=/usr \
+    --x11dir=/usr/share/fonts/misc \
+    --psfdir=/usr/share/kbd/consolefonts
+  make && sudo make install
+
 else
   printf -- "$(blue '  ->') Terminus font found using fc-list\n"
 fi
