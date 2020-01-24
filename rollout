@@ -451,6 +451,8 @@ hi! htmlTag ctermfg=NONE
 hi! htmlTagN ctermfg=NONE
 hi! htmlEndTag ctermfg=NONE
 hi! link htmlH1 Normal
+hi! link jsonQuote Keyword
+hi! link jsonKeyword Keyword
 
 " Common groups that link to default highlighting.
 " You can specify other highlighting easily.
