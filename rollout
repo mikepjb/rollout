@@ -324,7 +324,7 @@ filetype plugin indent on
 set nocompatible nu autowrite hidden shiftwidth=2 tabstop=2 gdefault mouse=a
 set clipboard=unnamed,unnamedplus expandtab smarttab ignorecase smartcase
 set shortmess+=c iskeyword+=- path+=** wildmenu noswapfile
-set wildignore+=**/node_modules/**,**/cljs/**.js*
+set wildignore+=**/node_modules/**,**/cljs/**.js*,**/cljs-out/*
 " set completeopt=menu,menuone,noinsert,noselect
 set stl=--\ %1*%F%m%r%h%w%*\ %=\ %y\ -\ [%l,%c]\ [%L,%p%%] showtabline=1
 set fillchars=stlnc:\-,stl:\-,vert:\|
