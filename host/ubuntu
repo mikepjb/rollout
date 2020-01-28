@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+# Set the keyboard permanently to US w/ ctrl as caps:
+sudo sed -i \
+  -e 's/XKBLAYOUT=\"\w*"/XKBLAYOUT=\"us\"/g' \
+  -e 's/XKBOPTIONS=\"\w*"/XKBOPTIONS=\"ctrl:nocaps\"/g' \
+  /etc/default/keyboard
+
+
+# TODO should probably update too..
+sudo apt install \
+  curl \
+  tmux \
+  vim-gtk3
