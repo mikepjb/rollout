@@ -124,7 +124,7 @@ htop ssh-agent ssh-keygen rg xmllint tig
 #development-servers
 redis-server postgres mongo
 #ui
-xterm openbox-session xrdb xdpyinfo xset setxkbmap firefox chromium
+xterm gnome-session openbox-session xrdb xdpyinfo xset setxkbmap firefox chromium
 #photography
 darktable gthumb'
 
@@ -282,7 +282,11 @@ xset r rate 200 25
 
 setxkbmap -layout us -option ctrl:nocaps
 
-exec openbox-session
+if command -v gnome-session; then
+  exec gnome-session
+else
+  exec openbox-session
+fi
 EOF
 )
 
