@@ -12,3 +12,13 @@ sudo apt install \
   curl \
   tmux \
   vim-gtk3
+
+# Install the latest Node LTS:
+if ! command -v node; then
+  curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+  sudo apt-get install -y nodejs
+
+  # give yourself write permissions for node modules
+  sudo mkdir -p /usr/local/lib/node_modules
+  sudo chown -R $USER /usr/local/lib/node_modules
+fi
