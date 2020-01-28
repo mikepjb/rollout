@@ -303,8 +303,12 @@ if ! diff $(which vi) $(which vim) >/dev/null; then
 fi
 
 if [ ! -f ~/.vim/autoload/pathogen.vim ]; then
-  mkdir -p ~/.vim/autoload ~/.vim/bundle && \
+  mkdir -p ~/.vim/autoload ~/.vim/bundle
+  if [ $(command -v curl) ]; then
     curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+  else
+    wget -O ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+  fi
 fi
 
 include 'tpope/vim-fireplace'
