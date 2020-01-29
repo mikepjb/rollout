@@ -514,10 +514,10 @@ export EDITOR=vim
 export XDG_CONFIG_HOME=$HOME/.config
 export PAGER='less -S'
 export SSH_AUTH_SOCK=$HOME/.ssh/ssh-agent.socket
-export PATH=/bin:/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:$HOME/.yarn/bin
+export PATH=/bin:/sbin:$HOME/.config/npm/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:$HOME/.yarn/bin
 export CDPATH=$HOME/src
-export NVM_DIR="$HOME/.config/nvm"
-export NVM_SOURCE='/usr/share/nvm' # AUR nvm package
+# export NVM_DIR="$HOME/.config/nvm"
+# export NVM_SOURCE='/usr/share/nvm' # AUR nvm package
 
 alias gr='cd $(git rev-parse --show-toplevel || echo ".")'
 alias ..='cd ..'
