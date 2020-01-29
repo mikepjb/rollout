@@ -34,3 +34,8 @@ if ! command -v node; then
 fi
 
 # TODO hide firefox titlebar by script (currently change via customize menu item => checkbox)
+
+# update bluez to >=5.28.2 at avoid awful feedback loop bug on noise cancelling headphones:
+# sudo add-apt-repository ppa:bluetooth/bluez
+# sudo apt update
+# sudo apt install bluez
