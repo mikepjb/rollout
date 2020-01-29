@@ -13,7 +13,9 @@ sudo apt install -y \
   tmux \
   vim-gtk3 \
   build-essential \
-  apt-file
+  apt-file \
+  htop \
+  gimp
 
 # Install the latest Node LTS:
 if ! command -v node; then
