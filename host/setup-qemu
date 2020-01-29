@@ -4,7 +4,7 @@ windows_image=$HOME/.windows-10.img
 
 function deps {
   if [ $(command -v pacman) ]; then
-    sudo pacman -S qemu
+    sudo pacman -S qemu qemu-kvm
   else
     sudo apt install qemu
   fi
