@@ -155,7 +155,7 @@ if [ "$theme" = "dark" ]; then
   printf -- "$(blue '  ->') Setting Lumo (dark) theme\n"
   foreground=#f7fafc
   background=#1a202c
-  cursor=#1a202c
+  cursor=#f7fafc
   black=#2d3748
   bright_black=#718096
   red=#f56565
