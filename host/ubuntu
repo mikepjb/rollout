@@ -8,10 +8,12 @@ sudo sed -i \
 
 
 # TODO should probably update too..
-sudo apt install \
+sudo apt install -y \
   curl \
   tmux \
-  vim-gtk3
+  vim-gtk3 \
+  build-essential \
+  apt-file
 
 # Install the latest Node LTS:
 if ! command -v node; then
