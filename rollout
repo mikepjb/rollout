@@ -444,6 +444,8 @@ if exists("syntax_on")
 endif
 let g:colors_name = "rollout"
 
+set background=dark
+
 hi Normal ctermfg=NONE " ex line text & some special chars :? etc?
 hi Constant ctermfg=5
 hi PreProc ctermfg=1
