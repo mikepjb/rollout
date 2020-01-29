@@ -56,3 +56,9 @@ installing nodejs (LTS) also provides chocolatey, python2 and some visual studio
   - Create/edit the keyboard layout for your corresponding bluetooth keyboard
   - disconnect/reconnect keyboard to update mappings.
   
+pkg install clang make python2
+
+pkg install nodejs-lts
+touch $HOME/.hushlogin
+
+bash-completion does not seem to work inside tmux on termux
