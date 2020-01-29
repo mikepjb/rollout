@@ -25,9 +25,12 @@ if ! command -v node; then
   #   npm ubuntu package still could not resolve it's dependencies')
   sudo apt-get install -y nodejs
 
+  mkdir -p ~/.config/npm
+  npm config set prefix '~/.config/npm'
+
   # give yourself write permissions for node modules
-  sudo mkdir -p /usr/lib/node_modules
-  sudo chown -R $USER /usr/lib/node_modules
+  # sudo mkdir -p /usr/lib/node_modules
+  # sudo chown -R $USER /usr/lib/node_modules
 fi
 
 # TODO hide firefox titlebar by script (currently change via customize menu item => checkbox)
