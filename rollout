@@ -313,8 +313,11 @@ color14=$bright_cyan
 color15=$bright_white
 EOF
 )
+
 # TODO am I running inside a display? xhost not present on arch == unreliable
-xrdb -merge <<< "$xresources"
+if [ ! "$platform" = "Android" ]; then
+  xrdb -merge <<< "$xresources"
+fi
 
 write_and_save ~/.xinitrc "$xinitrc"
 write_and_save ~/.Xresources "$xresources"
