@@ -18,9 +18,16 @@ sudo apt install -y \
 # Install the latest Node LTS:
 if ! command -v node; then
   curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+  # TODO something weird happened when doing this manually:
+  # - initially I had no npm
+  # - .. did some stuff (maybe sudo apt-get update?)
+  # - sudo apt-get install nodejs provided npm (althought sudo apt-get install
+  #   npm ubuntu package still could not resolve it's dependencies')
   sudo apt-get install -y nodejs
 
   # give yourself write permissions for node modules
   sudo mkdir -p /usr/local/lib/node_modules
   sudo chown -R $USER /usr/local/lib/node_modules
 fi
+
+# TODO hide firefox titlebar by script (currently change via customize menu item => checkbox)
