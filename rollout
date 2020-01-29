@@ -529,7 +529,7 @@ write_and_save ~/.vim/colors/rollout.vim "$rollout"
 
 printf -- "$(green '==>') Shell\n"
 
-+bash_path="/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin"
+bash_path="/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin"
 
 if [ "$platform" = "Android" ]; then
   bash_path="/data/data/com.termux/files/usr/bin:/data/data/com.termux/files/usr/bin/applets:$bash_path"
