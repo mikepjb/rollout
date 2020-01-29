@@ -1,6 +1,7 @@
 #!/bin/bash -e
 # vim: fdm=marker
 
+# TODO change android bluetooth keyboard layout to us?
 # TODO xsetroot -solid "#cbd5e0"
 # TODO check arch linux for general recommendations
 # TODO make sure gmail/good email client opens when firefox click email address
