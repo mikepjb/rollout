@@ -414,7 +414,7 @@ augroup clojure
 augroup end
 
 if executable('tailwindcss-language-server')
-  let g:lsc_server_commands = {
+  let g:tailwind_server_config = {
     \ 'html': {
     \   'command': 'tailwindcss-language-server --stdio',
     \   'suppress_stderr': v:true,
@@ -426,14 +426,42 @@ if executable('tailwindcss-language-server')
     \ }
   let g:lsc_enable_autocomplete  = v:true
 
-  let g:lsc_auto_map = {
-   \  'GoToDefinition': 'gd',
-   \  'FindReferences': 'gr',
-   \  'Rename': 'gR',
-   \  'ShowHover': 'K',
-   \  'Completion': 'omnifunc',
-   \}
+  let g:lsc_server_commands = g:tailwind_server_config
 endif
+
+if executable('javascript-typescript-langserver')
+  let g:javascript_server_config = {
+    \ 'html': {
+    \   'command': 'javascript-typescript-stdio',
+    \   'suppress_stderr': v:true,
+    \   },
+    \ 'javascript': {
+    \   'command': 'javascript-typescript-stdio',
+    \   'suppress_stderr': v:true,
+    \   },
+    \ }
+  let g:lsc_enable_autocomplete  = v:true
+
+  let g:lsc_server_commands = g:javascript_server_config
+endif
+
+let g:lsc_auto_map = {
+ \  'GoToDefinition': 'gd',
+ \  'FindReferences': 'gr',
+ \  'Rename': 'gR',
+ \  'ShowHover': 'K',
+ \  'Completion': 'omnifunc',
+ \}
+
+function! SwapLanguageServer(config)
+  LSClientDisable
+  for [filetype, config] in items(a:config)
+    call RegisterLanguageServer(filetype, config)
+  endfor
+  LSClientEnable
+endfunction
+command! Tailwind :call SwapLanguageServer(g:tailwind_server_config)
+command! JS :call SwapLanguageServer(g:javascript_server_config)
 
 let g:closetag_filenames = '*.html,*.xhtml,*.md,*.js'
 EOF
