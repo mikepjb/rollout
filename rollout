@@ -9,6 +9,9 @@
 # TODO trap exit_code and revert file changes if an error occurs
 # TODO check min version for tmux and warn (do not fail)
 
+# TODO tailwindcss language server npm install
+# TODO typescript-javascript-langserver npm install
+
 # Functions {{{
 
 # N.B 1; also turns on bold mode
