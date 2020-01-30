@@ -42,3 +42,5 @@ fi
 # sudo add-apt-repository ppa:bluetooth/bluez
 # sudo apt update
 # sudo apt install bluez
+
+# at the time of creation, firefox 72.0.1 showed grey corners in CSD mode (condensed titlebar), setting layers.acceleration.force-enabled to true and restarting removed them.
