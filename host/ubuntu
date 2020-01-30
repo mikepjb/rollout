@@ -15,7 +15,8 @@ sudo apt install -y \
   build-essential \
   apt-file \
   htop \
-  gimp
+  gimp \
+  git-crypt
 
 # Install the latest Node LTS:
 if ! command -v node; then
