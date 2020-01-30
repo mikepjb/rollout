@@ -4,7 +4,7 @@ windows_image=$HOME/.windows-10.img
 
 function deps {
   if [ $(command -v pacman) ]; then
-    sudo pacman -S qemu qemu-kvm
+    sudo pacman -S qemu qemu-kvm libvirt-bin bridge-utils virt-manager
   else
     sudo apt install qemu
   fi
@@ -16,6 +16,12 @@ function create_system {
 
 function launch_system {
   qemu-system-x86_64 -enable-kvm -m 8G -drive format=raw,file=$windows_image
+}
+
+function configure_groups {
+  echo 'not configured'
+  # must be a member of libvirtd and kvm on ubuntu
+  # sudo adduser `id -un` kvm
 }
 
 function main {
@@ -41,6 +47,8 @@ function main {
 
 # Run normally after initial installation
 # qemu-system-x86_64 -enable-kvm -m 2G -drive format=raw,file=$HOME/.windows-10.img
+
+# TODO make sure you disable sleep/display turn off on qemu windows machine
 
 # can we automate shit like caps as ctrl? can we be bothered?
 
