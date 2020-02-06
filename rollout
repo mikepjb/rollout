@@ -400,7 +400,14 @@ cnoremap <C-e> <End>
 inoremap <C-f> <Right>
 inoremap <C-b> <Left>
 inoremap <C-d> <Delete>
-inoremap <C-l> <space>=><space>
+inoremap <buffer><expr> <C-l> Arrow()
+
+function! Arrow()
+  if (&ft == 'purescript' || &ft == 'haskell')
+    return '->'
+  endif
+  return '=>'
+endfunction
 
 command! TrimWhitespace :%s/\s\+$//e
 command! ClearPrefixWhitespace :%s/^\s\+//g
