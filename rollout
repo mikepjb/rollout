@@ -8,6 +8,7 @@
 # TODO make cygwin compat (no sudo, detect if X11/has display for xrdb etc on urxvt/mintty)
 # TODO trap exit_code and revert file changes if an error occurs
 # TODO check min version for tmux and warn (do not fail)
+# TODO remove screen-256color note if xterm-256color works fine
 
 # TODO tailwindcss language server npm install
 # TODO typescript-javascript-langserver npm install
@@ -367,7 +368,7 @@ filetype plugin indent on
 set nocompatible nu autowrite hidden shiftwidth=2 tabstop=2 gdefault mouse=a
 set clipboard=unnamed,unnamedplus expandtab smarttab ignorecase smartcase
 set shortmess+=c iskeyword+=- path+=** wildmenu noswapfile textwidth=79
-set wildignore+=**/node_modules/**,**/cljs/**.js*,**/cljs-out/*
+set wildignore+=**/node_modules/**,**/cljs/**.js*,**/cljs-out/*,**/target/*
 " set completeopt=menu,menuone,noinsert,noselect
 set stl=--\ %1*%F%m%r%h%w%*\ %=\ %y\ -\ [%l,%c]\ [%L,%p%%] showtabline=1
 set fillchars=stlnc:\-,stl:\-,vert:\|
@@ -403,16 +404,17 @@ inoremap <C-d> <Delete>
 inoremap <buffer><expr> <C-l> Arrow()
 
 function! Arrow()
-  if (&ft == 'purescript' || &ft == 'haskell')
-    return '->'
+  if (&ft == 'javascript' || &ft == 'html')
+    return ' => '
   endif
-  return '=>'
+  return ' -> '
 endfunction
 
 command! TrimWhitespace :%s/\s\+$//e
 command! ClearPrefixWhitespace :%s/^\s\+//g
 command! PrettifyJSON :%!python -m json.tool
 command! PrettifyXML  :%!xmllint --format -
+command! JackInCljs :CljEval (figwheel.main.api/cljs-repl "dev")<cr>
 nnoremap zS :echo join(reverse(map(synstack(line('.'), col('.')), 'synIDattr(v:val,"name")')),' ')<cr>
 
 colorscheme rollout
@@ -570,7 +572,7 @@ write_and_save ~/.vim/colors/rollout.vim "$rollout"
 
 printf -- "$(green '==>') Shell\n"
 
-bash_path="/bin:/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:$HOME/.config/npm/bin"
+bash_path="/bin:/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:$HOME/.config/npm/bin:$HOME/.local/bin"
 
 if [ "$platform" = "Android" ]; then
   bash_path="/data/data/com.termux/files/usr/bin:/data/data/com.termux/files/usr/bin/applets:$bash_path"
@@ -625,7 +627,10 @@ write_and_save ~/.bashrc "$bashrc"
 
 tmuxconf=$(cat <<"EOF"
 set -g status-position bottom
-set -g default-terminal "screen-256color"
+# used to be screen-256color (11/02/20), changed to xterm-256color for
+# gnome-terminal italics
+set -g default-terminal "xterm-256color"
+set -as terminal-overrides ',xterm*:sitm=\E[3m' # italics in gnome-terminal
 set -g default-command $SHELL
 set -g history-limit 100000
 set -g mouse on

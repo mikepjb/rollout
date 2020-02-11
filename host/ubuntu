@@ -16,7 +16,40 @@ sudo apt install -y \
   apt-file \
   htop \
   gimp \
-  git-crypt
+  git-crypt \
+  gnome-tweaks \
+  libgtk3-dev \
+  rlwrap
+
+# TODO not called currently
+function haskell_setup {
+  sudo apt install -y haskell haskell-stack
+}
+
+# sudo apt install clojure provides 1.9.0.. no clj cli either
+# if no clj/clojure on command line
+# sudo apt install openjdk-11-jdk openjdk-11-source maven
+# curl -O https://download.clojure.org/install/linux-install-1.10.1.507.sh
+# chmod +x linux-install-1.10.1.507.sh
+# sudo ./linux-install-1.10.1.507.sh
+
+# Install qemu 4.1 (18.04 uses 2.11 by default, it's terrible):
+sudo apt install -y pkg-config libasound2-dev libpulse-dev libpixman-1-dev
+
+# wget https://download.qemu.org/qemu-4.1.0.tar.xz 
+# tar xvJf qemu-4.1.0.tar.xz 
+# cd qemu-4.1.0
+# ./configure --target-list=x86_64-softmmu --audio-drv-list=alsa,pa --enable-gtk
+# make
+
+# TODO you need gnome-tweaks for:
+# - easily changing theme? (is that true?)
+# - modifying trackpad to use right click on right area click
+
+# TODO not sure this is needed, running babel-node via npm scripts seems to work fine
+# TODO maybe... we can load node_modules/****/bin? to PATH? to execute local libs
+# npm -g i \
+#   @babel/node
 
 # Install the latest Node LTS:
 if ! command -v node; then
