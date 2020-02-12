@@ -238,6 +238,7 @@ else
 fi
 
 
+# TODO if we don't have terminus installed, *font will cause X11 emacs to fail:
 xresources=$(cat <<EOF
 Xft.dpi: $dpi
 XTerm*utf8: 1
@@ -630,7 +631,7 @@ set -g status-position bottom
 # used to be screen-256color (11/02/20), changed to xterm-256color for
 # gnome-terminal italics
 set -g default-terminal "xterm-256color"
-set -as terminal-overrides ',xterm*:sitm=\E[3m' # italics in gnome-terminal
+set -gq utf-8 on
 set -g default-command $SHELL
 set -g history-limit 100000
 set -g mouse on
