@@ -361,6 +361,7 @@ include 'alvan/vim-closetag'
 include 'mattn/emmet-vim'
 include 'mikepjb/vim-lsc'
 include 'ajh17/VimCompletesMe'
+include 'ElmCast/elm-vim'
 
 vimrc=$(cat <<"EOF"
 execute pathogen#infect()
