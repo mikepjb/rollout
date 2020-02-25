@@ -477,7 +477,7 @@ endfunction
 command! Tailwind :call SwapLanguageServer(g:tailwind_server_config)
 command! JS :call SwapLanguageServer(g:javascript_server_config)
 
-let g:closetag_filenames = '*.html,*.xhtml,*.md,*.js'
+let g:closetag_filenames = '*.html,*.xhtml,*.md,*.js,*.vue'
 EOF
 )
 
@@ -488,9 +488,9 @@ hi clear
 if exists("syntax_on")
   syntax reset
 endif
-let g:colors_name = "rollout"
-
 set background=dark
+
+let g:colors_name = "rollout"
 
 hi Normal ctermfg=NONE " ex line text & some special chars :? etc?
 hi Constant ctermfg=5
@@ -603,6 +603,7 @@ alias de='export \$(egrep -v "^#" .env | xargs)'
 alias xclip='xclip -sel clip'
 alias jv="jq -C | less -R"
 alias ssha="ssh-agent -a \$SSH_AUTH_SOCK && ssh-add ~/.ssh/id_rsa"
+alias open='xdg-open'
 
 viw() { vi \`which "\$1"\`; }
 pp() { until ping -c1 1.1.1.1 >/dev/null 2>&1; do :; done; }
