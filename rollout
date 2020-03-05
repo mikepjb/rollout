@@ -96,6 +96,18 @@ function include {
   fi
 }
 
+function include_js() {
+    local p=${1:-Package required}
+    local v=${2:-Version required}
+    shift 2
+    local i=$(node -p "require('$p/package.json').version" 2>/dev/null)
+    if [ "$i" == "$v" ]; then
+      echo "$(blue '  ->') installing $p"
+      npm "$@" install "$p@$v"
+    else
+      echo "$(blue '  ->') $p already installed"
+    fi
+}
 
 # }}}
 # Start {{{
@@ -239,12 +251,12 @@ fi
 
 
 # TODO if we don't have terminus installed, *font will cause X11 emacs to fail:
+# *font: -*-terminus-medium-*-*-*-$xterm_text_size-*-*-*-*-*-iso10646-1
 xresources=$(cat <<EOF
 Xft.dpi: $dpi
 XTerm*utf8: 1
 XTerm*termName: xterm-256color
 XTerm*VT100.geometry: 160x50
-*font: -*-terminus-medium-*-*-*-$xterm_text_size-*-*-*-*-*-iso10646-1
 XTerm*titeInhibit: false
 XTerm*ScrollBar: false
 XTerm*ScrollKey: false
@@ -685,4 +697,14 @@ git config --global --replace-all alias.amend 'commit --amend'
 git config --global --replace-all alias.ffa 'fetch --all && git rebase origin/master'
 git config --global --replace-all alias.push-new 'push -u origin HEAD'
 git config --global --replace-all alias.ra "log --abbrev-commit --pretty=format:'%<(7)%C(yellow)%h %Cgreen%<(15)%cr%C(bold cyan)%<(17)<%an>%C(red)%d %Creset %s'"
+# }}}
+# Javascript {{{
+printf -- "$(green '==>') Javascript Setup\n"
+if [ $(command -v npm) ]; then
+  include_js yarn 'v6.8.0'
+  include_js eslint '1.21.1'
+  # other packages you use in projects: nuxt node-sass normalize.css sass-loader express
+else
+  echo "$(red '   ->') $dep $(red 'could not find npm on PATH, skipping')"
+fi
 # }}}
