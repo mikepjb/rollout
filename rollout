@@ -410,6 +410,7 @@ nnoremap <C-q> :quit<cr>
 nnoremap <Leader>e :e <C-R>=expand("%:p:h") . '/'<CR>
 nnoremap <leader>d :LSClientShowHover<CR>
 nnoremap <leader>f :find<space>
+nnoremap <leader>g :grep<space>
 nnoremap <leader>i :e ~/src/rollout/rollout<cr>
 nnoremap <leader>l :e ~/.log.md<cr>
 nnoremap <leader>b :b<space>
@@ -434,6 +435,7 @@ nnoremap gj :ALENextWrap<cr>
 nnoremap gk :ALEPreviousWrap<cr>
 nnoremap g1 :ALEFirst<cr>
 nnoremap g0 :ALEStopAllLSPs<cr>
+nnoremap gq :copen<cr>
 
 " Use <C-L> to:
 "   - redraw
@@ -563,6 +565,8 @@ hi Ignore ctermfg=1
 hi Number ctermfg=2
 hi Function ctermfg=6
 hi String ctermfg=7
+hi Search ctermbg=8 ctermfg=NONE
+hi QuickFixLine ctermbg=0 ctermfg=NONE
 hi Identifier ctermfg=3
 hi Keyword ctermfg=1
 hi Special ctermfg=3
