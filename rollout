@@ -1,17 +1,9 @@
 #!/bin/bash -e
 # vim: fdm=marker
+# reload this file with R in nvim or :call Reload()
 
 # TODO change android bluetooth keyboard layout to us?
-# TODO xsetroot -solid "#cbd5e0"
-# TODO check arch linux for general recommendations
 # TODO make sure gmail/good email client opens when firefox click email address
-# TODO make cygwin compat (no sudo, detect if X11/has display for xrdb etc on urxvt/mintty)
-# TODO trap exit_code and revert file changes if an error occurs
-# TODO check min version for tmux and warn (do not fail)
-# TODO remove screen-256color note if xterm-256color works fine
-
-# TODO tailwindcss language server npm install
-# TODO typescript-javascript-langserver npm install
 
 # Functions {{{
 
@@ -90,9 +82,9 @@ function write_and_save { # write_and_save ~/.bashrc "$bashrc"
 
 function include {
   name=$(echo $1 | cut -d/ -f2)
-  echo "$(blue '  ->') looking for ~/.vim/bundle/$name"
-  if [ ! -d "$HOME/.vim/bundle/$name" ]; then
-    git clone "https://github.com/$1.git" "$HOME/.vim/bundle/$name"
+  echo "$(blue '  ->') looking for ~/.nvim/bundle/$name"
+  if [ ! -d "$HOME/.nvim/bundle/$name" ]; then
+    git clone --depth 1 "https://github.com/$1.git" "$HOME/.nvim/bundle/$name"
   fi
 }
 
@@ -103,10 +95,16 @@ function include_js() {
     local i=$(node -p "require('$p/package.json').version" 2>/dev/null)
     if [ "$i" == "$v" ]; then
       echo "$(blue '  ->') installing $p"
-      npm "$@" install "$p@$v"
+      npm "$@" -g install "$p@$v"
     else
       echo "$(blue '  ->') $p already installed"
     fi
+}
+
+function build_neovim() {
+  # requires libtool-bin + cmake
+  # TODO implement
+  echo 'does nothing yet'
 }
 
 # }}}
@@ -222,7 +220,7 @@ printf -- "$(blue '  ->') not implemented for now.\n"
 # maybe just select from the above call?
 
 # if [ "$terminus" = '' ]; then
-# 
+#
 # else
 #   printf -- "$(blue '  ->') Terminus font found using fc-list\n"
 # fi
@@ -354,12 +352,12 @@ if ! diff $(which vi) $(which vim) >/dev/null; then
   # sudo cp $(which vim) /usr/local/bin/vi
 fi
 
-if [ ! -f ~/.vim/autoload/pathogen.vim ]; then
-  mkdir -p ~/.vim/autoload ~/.vim/bundle
+if [ ! -f ~/.config/nvim/autoload/pathogen.vim ]; then
+  mkdir -p ~/.config/nvim/autoload ~/.nvim/bundle
   if [ $(command -v curl) ]; then
-    curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+    curl -LSso ~/.config/nvim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
   else
-    wget -O ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+    wget -O ~/.config/nvim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
   fi
 fi
 
@@ -371,10 +369,11 @@ include 'pangloss/vim-javascript'
 include 'MaxMEllon/vim-jsx-pretty'
 include 'alvan/vim-closetag'
 include 'mattn/emmet-vim'
-include 'mikepjb/vim-lsc'
+# include 'mikepjb/vim-lsc'
 include 'ajh17/VimCompletesMe'
 include 'ElmCast/elm-vim'
 include 'posva/vim-vue'
+include 'dense-analysis/ale'
 
 vimrc=$(cat <<"EOF"
 execute pathogen#infect()
@@ -383,16 +382,27 @@ filetype plugin indent on
 set nocompatible nu autowrite hidden shiftwidth=2 tabstop=2 gdefault mouse=a
 set clipboard=unnamed,unnamedplus expandtab smarttab ignorecase smartcase
 set shortmess+=c iskeyword+=- path+=** wildmenu noswapfile textwidth=79
+set hlsearch
 set wildignore+=**/node_modules/**,**/cljs/**.js*,**/cljs-out/*,**/target/*
 " set completeopt=menu,menuone,noinsert,noselect
 set stl=--\ %1*%F%m%r%h%w%*\ %=\ %y\ -\ [%l,%c]\ [%L,%p%%] showtabline=1
 set fillchars=stlnc:\-,stl:\-,vert:\|
+setglobal grepformat=%f:%l:%c:%m,%f:%l:%m,%f:%l%m,%f\ \ %l%m
+if executable('rg')
+  setglobal grepprg=rg\ -s\ --vimgrep
+elseif has('unix')
+  setglobal grepprg=grep\ -rn\ $*\ /dev/null
+endif
+if !has('nvim')
+  set scl=number
+endif
 setglobal tags=./tags;
 runtime macros/matchit.vim
 let g:ftplugin_sql_omni_key = '<Nop>' " ctrl+c is for escape, not completion.
 
 
 let mapleader= ' '
+nnoremap R :call Reload()<CR>
 nnoremap Y y$
 nnoremap Q @q
 nnoremap gb :Gblame<cr>
@@ -403,6 +413,8 @@ nnoremap <leader>f :find<space>
 nnoremap <leader>i :e ~/src/rollout/rollout<cr>
 nnoremap <leader>l :e ~/.log.md<cr>
 nnoremap <leader>b :b<space>
+" conflicts with neovim terminal <CR> on finish
+" nnoremap <CR> :!elm make src/Main.elm --output elm.js<CR>
 imap <C-c> <esc>
 
 map <C-h> <C-w><C-h>
@@ -416,14 +428,35 @@ cnoremap <C-e> <End>
 inoremap <C-f> <Right>
 inoremap <C-b> <Left>
 inoremap <C-d> <Delete>
-inoremap <buffer><expr> <C-l> Arrow()
+inoremap <C-l> <space>=><space>
+nnoremap gF :ALEFix<cr>
+nnoremap gj :ALENextWrap<cr>
+nnoremap gk :ALEPreviousWrap<cr>
+nnoremap g1 :ALEFirst<cr>
+nnoremap g0 :ALEStopAllLSPs<cr>
 
-function! Arrow()
-  if (&ft == 'javascript' || &ft == 'html')
-    return ' => '
-  endif
-  return ' -> '
-endfunction
+" Use <C-L> to:
+"   - redraw
+"   - clear 'hlsearch'
+"   - update the current diff (if any)
+" Use {count}<C-L> to:
+"   - reload (:edit) the current buffer
+nnoremap <silent><expr> <C-L> (v:count ? ':<C-U>:call <SID>save_change_marks()\|edit\|call <SID>restore_change_marks()<CR>' : '')
+      \ . ':nohlsearch'.(has('diff')?'\|diffupdate':'')
+      \ . '<CR><C-L>'
+
+if !exists('*Reload') " do not redefine self
+  function! Reload()
+    if has('nvim')
+      botright 20 split | terminal ~/src/rollout/rollout
+    else
+      execute '!~/src/rollout/rollout'
+    endif
+    source ~/.config/nvim/init.vim
+    " does not update the first time.. 2 times reload shows the change though..
+    " colorscheme rollout
+  endfunction
+endif
 
 command! TrimWhitespace :%s/\s\+$//e
 command! ClearPrefixWhitespace :%s/^\s\+//g
@@ -440,37 +473,53 @@ augroup clojure
   au Syntax clojure nmap <buffer>  gd <Plug>FireplaceDjump
 augroup end
 
-if executable('tailwindcss-language-server')
-  let g:tailwind_server_config = {
-    \ 'html': {
-    \   'command': 'tailwindcss-language-server --stdio',
-    \   'suppress_stderr': v:true,
-    \   },
-    \ 'javascript': {
-    \   'command': 'tailwindcss-language-server --stdio',
-    \   'suppress_stderr': v:true,
-    \   },
-    \ }
-  let g:lsc_enable_autocomplete  = v:true
+let g:ale_linters = {
+  \ 'javascript': ['prettier', 'eslint'],
+  \ 'vue': ['eslint', 'stylelint']
+  \ }
+let g:ale_fixers = {
+  \ 'javascript': ['prettier', 'eslint'],
+  \ 'vue': ['prettier', 'eslint', 'stylelint']
+  \ }
+let g:ale_linter_aliases = {'vue': ['css', 'javascript']}
+let g:ale_lint_on_text_changed = 'normal'
+let g:ale_lint_on_insert_leave = 1
+let g:ale_fix_on_save = 1
+let g:ale_lint_delay = 0
+let g:ale_set_quickfix = 0
+let g:ale_set_loclist = 0
 
-  let g:lsc_server_commands = g:tailwind_server_config
-endif
-
-if executable('javascript-typescript-langserver')
-  let g:javascript_server_config = {
-    \ 'html': {
-    \   'command': 'javascript-typescript-stdio',
-    \   'suppress_stderr': v:true,
-    \   },
-    \ 'javascript': {
-    \   'command': 'javascript-typescript-stdio',
-    \   'suppress_stderr': v:true,
-    \   },
-    \ }
-  let g:lsc_enable_autocomplete  = v:true
-
-  let g:lsc_server_commands = g:javascript_server_config
-endif
+" if executable('tailwindcss-language-server')
+"   let g:tailwind_server_config = {
+"     \ 'html': {
+"     \   'command': 'tailwindcss-language-server --stdio',
+"     \   'suppress_stderr': v:true,
+"     \   },
+"     \ 'javascript': {
+"     \   'command': 'tailwindcss-language-server --stdio',
+"     \   'suppress_stderr': v:true,
+"     \   },
+"     \ }
+"   let g:lsc_enable_autocomplete  = v:true
+"
+"   let g:lsc_server_commands = g:tailwind_server_config
+" endif
+"
+" if executable('javascript-typescript-langserver')
+"   let g:javascript_server_config = {
+"     \ 'html': {
+"     \   'command': 'javascript-typescript-stdio',
+"     \   'suppress_stderr': v:true,
+"     \   },
+"     \ 'javascript': {
+"     \   'command': 'javascript-typescript-stdio',
+"     \   'suppress_stderr': v:true,
+"     \   },
+"     \ }
+"   let g:lsc_enable_autocomplete  = v:true
+"
+"   let g:lsc_server_commands = g:javascript_server_config
+" endif
 
 let g:lsc_auto_map = {
  \  'GoToDefinition': 'gd',
@@ -495,6 +544,7 @@ EOF
 )
 
 write_and_save ~/.vimrc "$vimrc"
+write_and_save ~/.config/nvim/init.vim "$vimrc"
 
 rollout=$(cat <<"EOF"
 hi clear
@@ -520,7 +570,8 @@ hi Preproc ctermfg=1
 hi Type ctermfg=2
 hi Comment ctermfg=8
 hi TODO ctermfg=4 ctermbg=NONE
-hi LineNr ctermfg=7 ctermbg=NONE
+hi LineNr ctermfg=8 ctermbg=NONE
+hi SignColumn ctermfg=8 ctermbg=NONE
 hi CursorLine ctermfg=7 ctermbg=NONE
 hi Visual ctermfg=NONE ctermbg=0
 hi Error ctermfg=1 ctermbg=NONE
@@ -575,12 +626,15 @@ hi link Delimiter	Special
 hi link SpecialComment Special
 hi link Debug		Special
 
+hi ALEError ctermbg=0 ctermfg=NONE cterm=NONE
+hi ALEWarning ctermbg=0 ctermfg=NONE cterm=NONE
+
 set stl=--\ %1*%F%m%r%h%w%*\ %=\ %y\ -\ [%l,%c]\ [%L,%p%%] showtabline=1
 EOF
 )
 
-mkdir -p ~/.vim/colors
-write_and_save ~/.vim/colors/rollout.vim "$rollout"
+mkdir -p ~/.config/nvim/colors
+write_and_save ~/.config/nvim/colors/rollout.vim "$rollout"
 
 # }}}
 # Shell {{{
@@ -599,6 +653,7 @@ if shopt | grep 'completion_strip_exe' >/dev/null; then
   shopt -s completion_strip_exe
 fi
 
+[ -f /etc/bash_completion ] && . /etc/bash_completion
 [[ \$- =~ i ]] && stty -ixoff -ixon # Disable CTRL-S and CTRL-Q
 
 export EDITOR=vim
@@ -617,6 +672,7 @@ alias xclip='xclip -sel clip'
 alias jv="jq -C | less -R"
 alias ssha="ssh-agent -a \$SSH_AUTH_SOCK && ssh-add ~/.ssh/id_rsa"
 alias open='xdg-open'
+alias vi='nvim'
 
 viw() { vi \`which "\$1"\`; }
 pp() { until ping -c1 1.1.1.1 >/dev/null 2>&1; do :; done; }
@@ -643,8 +699,6 @@ write_and_save ~/.bashrc "$bashrc"
 
 tmuxconf=$(cat <<"EOF"
 set -g status-position bottom
-# used to be screen-256color (11/02/20), changed to xterm-256color for
-# gnome-terminal italics
 set -g default-terminal "xterm-256color"
 set -gq utf-8 on
 set -g default-command $SHELL
@@ -667,15 +721,32 @@ unbind ] ; bind ] command-prompt "rename-window '%%'"
 bind -n M-O last-window
 bind -n M-o select-pane -t :.+
 set -g status-left ""
-set -g status-right "#[fg=colour1]//#[fg=default] %d/%m/%y %I:%M"
+set -g status-right "#[fg=colour6]//#[fg=default] %d/%m/%y %I:%M"
 set -g status-style fg=default,bg=default
 set -g pane-border-style fg=default,bg=default
 set -g pane-active-border-style fg=default,bg=default
-setw -g window-status-current-style fg=colour1,bg=default
+setw -g window-status-current-style fg=colour6,bg=default
+set -g message-style fg=colour5,bg=default
 EOF
 )
 
 write_and_save ~/.tmux.conf "$tmuxconf"
+
+
+eslintrc=$(cat <<"EOF"
+module.exports = {
+  extends: [
+    'eslint:recommended',
+    'plugin:vue/recommended'
+  ],
+  rules: {
+    // override/add rules here
+  }
+}
+EOF
+)
+
+write_and_save ~/.eslintrc.js "$eslintrc"
 # }}}
 # Git {{{
 printf -- "$(green '==>') Git Aliases\n"
@@ -703,6 +774,8 @@ printf -- "$(green '==>') Javascript Setup\n"
 if [ $(command -v npm) ]; then
   include_js yarn 'v6.8.0'
   include_js eslint '1.21.1'
+  # include_js prettier '1.19.1' # version check isn't detected..
+  # include_js eslint-plugin-vue '6.2.1'
   # other packages you use in projects: nuxt node-sass normalize.css sass-loader express
 else
   echo "$(red '   ->') $dep $(red 'could not find npm on PATH, skipping')"
