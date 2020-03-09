@@ -82,9 +82,10 @@ function write_and_save { # write_and_save ~/.bashrc "$bashrc"
 
 function include {
   name=$(echo $1 | cut -d/ -f2)
-  echo "$(blue '  ->') looking for ~/.nvim/bundle/$name"
-  if [ ! -d "$HOME/.nvim/bundle/$name" ]; then
-    git clone --depth 1 "https://github.com/$1.git" "$HOME/.nvim/bundle/$name"
+  location="$HOME/.local/share/nvim/site/pack/rollout/start"
+  echo "$(blue '  ->') looking for $location/$name"
+  if [ ! -d "$location/$name" ]; then
+    git clone --depth 1 "https://github.com/$1.git" "$location/$name"
   fi
 }
 
@@ -352,15 +353,6 @@ if ! diff $(which vi) $(which vim) >/dev/null; then
   # sudo cp $(which vim) /usr/local/bin/vi
 fi
 
-if [ ! -f ~/.config/nvim/autoload/pathogen.vim ]; then
-  mkdir -p ~/.config/nvim/autoload ~/.nvim/bundle
-  if [ $(command -v curl) ]; then
-    curl -LSso ~/.config/nvim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
-  else
-    wget -O ~/.config/nvim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
-  fi
-fi
-
 include 'tpope/vim-fireplace'
 include 'tpope/vim-fugitive'
 include 'mikepjb/vim-pair'
@@ -376,7 +368,6 @@ include 'posva/vim-vue'
 include 'dense-analysis/ale'
 
 vimrc=$(cat <<"EOF"
-execute pathogen#infect()
 syn on
 filetype plugin indent on
 set nocompatible nu autowrite hidden shiftwidth=2 tabstop=2 gdefault mouse=a
@@ -661,7 +652,7 @@ fi
 [ -f /etc/bash_completion ] && . /etc/bash_completion
 [[ \$- =~ i ]] && stty -ixoff -ixon # Disable CTRL-S and CTRL-Q
 
-export EDITOR=vim
+export EDITOR=nvim
 export XDG_CONFIG_HOME=\$HOME/.config
 export PAGER='less -S'
 export SSH_AUTH_SOCK=\$HOME/.ssh/ssh-agent.socket
