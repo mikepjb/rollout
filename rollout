@@ -391,7 +391,8 @@ setglobal grepformat=%f:%l:%c:%m,%f:%l:%m,%f:%l%m,%f\ \ %l%m
 if executable('rg')
   setglobal grepprg=rg\ -s\ --vimgrep
 elseif has('unix')
-  setglobal grepprg=grep\ -rn\ $*\ /dev/null
+  " . will search for everything, remove if you want .clj etc
+  setglobal grepprg=grep\ -rn\ $*\ .\ /dev/null
 endif
 if !has('nvim')
   set scl=number
