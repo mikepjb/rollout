@@ -1,0 +1,59 @@
+## Raspberry Pi 4 config.txt
+## This contains optimal settings for running RetroArch and some stable 64 bit
+## Linux (raspian? debian? ubuntu? arch? who knows at this point...)
+
+# Memory (System/GPU) ------------------------------------------------
+
+# presumably gpu_mem should be more but this is based on lakka config
+# config docs say that pi 4 3d system actually uses sys memory so keep this low
+gpu_mem=128
+gpu_mem_256=112
+gpu_mem_512=160
+gpu_mem_1024=256
+
+# default on pi 4, cpu has it's own l2 cache, this prevents it accessing gpu l2
+disable_l2cache=1
+
+# Overclocking -------------------------------------------------------
+
+force_turbo=0
+# avoids bringing tv out of standby/channel switching.. why is this is in
+overclock section?
+hdmi_ignore_cec_init=1
+
+over_voltage=6
+
+arm_freq=2000
+
+# docs say 500 is default & 600 is the only other accepted value
+gpu_freq=600
+
+# XXX come back to this
+
+# Display/Video ------------------------------------------------------
+
+# lakka has distroconfig.txt with the following:
+dtoverlay=vc4-fkms-v3d
+# number should match number of physical displays
+max_framebuffers=1
+disable_splash=1
+disable_overscan=1
+dtparam=audio=on
+
+# noobs includes at the bottom of config.txt:
+hdmi_force_hotplug=1
+
+# Experimental -------------------------------------------------------
+
+# use sound over hdmi, try this if no sound over hdmi.. 
+# hdmi_drive=2
+
+# default is 4k at 30hz, unlikely to need this but just incase..
+# hdmi_enable_4kp60
+# forces kernel loading system to assume 64-bit, not sure if this is needed
+# arm_64bit=1
+# GIC-400 is used as interrupt controller, this is the default
+# enable_gic=1
+
+
+

@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+# started for pi 4
+
+sudo apt-get install \
+  neovim \
+  xterm \
+  tmux
+
+function rpi4_config {
+  # TODO how is lakka more performant in retroarch/emulation?
+  # -> review lakka config.txt
+  # -> review raspbian config.txt
+  # TODO how does lakka pick up n64 games that raspbian install did not?
+
+  # TODO set gpu ram to 256, or even 512? (default 76 mb)
+  # TODO set config.txt (raspbian has setup to scale resolution as stretch)
+
+  # TODO 
+
+  # XXX Reference: https://www.raspberrypi.org/documentation/configuration/config-txt/
+  # XXX Reference: https://github.com/sakaki-/gentoo-on-rpi-64bit#miscellaneous-configuration-notes-hints-and-tips-skip
+  return 1
+}
+
+function retroarch_install {
+  sudo apt-get install \
+    libxxf86vm-dev \
+    libxxf86dga-dev \
+    libx11-xcb-dev \
+    libavdevice-dev \
+    xorg-dev
+
+    # Edit Makefile and add a line: UDEV_LIBS += -lXxf86vm
+    CFLAGS='-mfpu=neon -mtune=cortex-a72 -march=armv8-a' ./configure --disable-opengl1 --enable-neon --enable-opengles3 --enable-opengles --disable-videocore
+    make -j4
+}
