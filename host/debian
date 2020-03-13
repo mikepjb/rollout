@@ -9,17 +9,25 @@ sudo apt-get install \
 
 function rpi4_config {
   # TODO how is lakka more performant in retroarch/emulation?
-  # -> review lakka config.txt
-  # -> review raspbian config.txt
   # TODO how does lakka pick up n64 games that raspbian install did not?
+  # -> review cores
+  # -> review lakka docs
+  # -> review lakka retroarch.cfg
 
-  # TODO set gpu ram to 256, or even 512? (default 76 mb)
-  # TODO set config.txt (raspbian has setup to scale resolution as stretch)
+  # TODO check if we need to update pi firmware
 
-  # TODO 
+  # TODO get a n64 game working on raspbian to test performance..
 
+  # TODO retroarch options:
+  # -> best video driver? gl/glcore (crashes on videocore)
+  # -> threaded video? false
+  # -> vsync? false (not available on pi anyway..)
+  # -> bilinear filtering? false
+  # -> audio_driver? alsathread
+  # -> rewind_enable? = false
   # XXX Reference: https://www.raspberrypi.org/documentation/configuration/config-txt/
   # XXX Reference: https://github.com/sakaki-/gentoo-on-rpi-64bit#miscellaneous-configuration-notes-hints-and-tips-skip
+  # XXX Reference: https://www.raspberrypi.org/forums/viewtopic.php?f=28&t=243500&p=1490467#p1490467
   return 1
 }
 

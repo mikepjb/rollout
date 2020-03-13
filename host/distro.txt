@@ -1,0 +1,36 @@
+# Which distro is best for my machines?
+
+- Pi needs a server version
+- I'd like a DE free linux so I can have openbox on all without bloat
+- 64-bit for all too is a bonus.'
+
+
+# The Options
+
+- Raspbian/Debian
+  - Raspbian is very easy to setup for Pi
+  - Raspbian is already on Pi
+  - Is 32 bit userland only (64 bit kernel tho)
+- Fedora
+  - Torvalds used it, Phoronix Michael uses it
+  - Nasa used it (and they used RHEL) back in 2008 at least
+  - Contributes to FOSS (esp. EPEL for work/enterprise clients)
+  - Not LTS supported, must update once a year (according to their website)
+- Ubuntu
+  - Has Pi Server image that works OOTB
+  - Desktop comes with Gnome..
+  - Uses Snaps
+
+# The Requirements
+
+- Pi Hole (Raspbian/Ubuntu/Debian/Fedora only officially supported for ARM w/ Centos x86)
+- RetroArch
+- No DE so openbox can be used without bloat
+- Samba for network sharing photos
+
+# The Exclusions
+
+- Gentoo (not officially supported on Pi hole)
+- Arch (rolling release makes it unsuitable for )
+
+# Ref: https://www.phoronix.com/scan.php?page=news_item&px=Fedora-Mag-2017
