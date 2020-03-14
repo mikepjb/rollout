@@ -2,10 +2,19 @@
 
 # started for pi 4
 
-sudo apt-get install \
+sudo apt-get install -y \
   neovim \
   xterm \
-  tmux
+  tmux \
+  openbox \
+  xinit \
+  gimp \
+  feh \
+  fonts-ubuntu
+
+sudo systemctl enable ssh # enable sshd at boot
+
+# TODO include openbox config
 
 function rpi4_config {
   # TODO how is lakka more performant in retroarch/emulation?
@@ -37,6 +46,7 @@ function retroarch_install {
     libxxf86dga-dev \
     libx11-xcb-dev \
     libavdevice-dev \
+    libgles2-mesa-dev \
     xorg-dev
 
     # Edit Makefile and add a line: UDEV_LIBS += -lXxf86vm

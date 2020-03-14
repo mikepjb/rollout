@@ -4,6 +4,8 @@
 
 # TODO change android bluetooth keyboard layout to us?
 # TODO make sure gmail/good email client opens when firefox click email address
+# TODO check for terminus too otherwise.. what is a safe choice? can I just say default mono?
+# TODO check locale? LANG? locale-gen etc
 
 # Functions {{{
 
@@ -233,16 +235,18 @@ echo '--> Check locale-gen?'
 
 printf -- "$(yellow '  ->') I do not currently write to /etc/vconsole.conf $(yellow '(not implemented)')\n"
 
-# TODO check for terminus too otherwise.. what is a safe choice? can I just say default mono?
 
 xterm_text_size=12
 dpi=70
 
 if [ $(command -v xdpyinfo) ] && [ $(command -v awk) ]; then
-  if [ `xdpyinfo | awk '/dimensions/{print $2}'` = '3840x2160' ]; then
+  res=`xdpyinfo | awk '/dimensions/{print $2}'` 
+  if [ $res = '3840x2160' ]; then
     printf -- "$(blue '  ->') HiDPI screen detected, adjusting dpi & xterm text size\n"
     dpi=144
     xterm_text_size=28
+  elif [ $res = '2560x1440' ]; then
+    dpi=90
   fi
 else
   printf -- "$(yellow '  ->') xdpyinfo and/or awk are not present so I can't check your resolution.\n"
@@ -254,12 +258,15 @@ fi
 xresources=$(cat <<EOF
 Xft.dpi: $dpi
 XTerm*utf8: 1
+xterm*font:     *-fixed-*-*-*-$xterm_text_size-*
 XTerm*termName: xterm-256color
 XTerm*VT100.geometry: 160x50
 XTerm*titeInhibit: false
 XTerm*ScrollBar: false
 XTerm*ScrollKey: false
 XTerm*metaSendsEscape: true
+XTerm.vt100.metaSendsEscape: true
+XTerm*eightBitInput: false
 *background:  $background
 *foreground:  $foreground
 *cursorColor: $cursor
@@ -291,7 +298,7 @@ EOF
 )
 
 xinitrc=$(cat <<"EOF"
-LANG='en_GB.UTF-8'
+LANG='en_US.UTF-8'
 
 [[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
 
@@ -304,6 +311,22 @@ if command -v gnome-session; then
 else
   exec openbox-session
 fi
+EOF
+)
+
+ob_autostart=$(cat <<"EOF"
+# http://interfacelift.com/wallpaper/D0eda083/04197_zionwaterfallafterthestorm_3840x2160.jpg
+
+[[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
+
+xset r rate 200 25
+
+if [ -f ~/Pictures/zion-waterfall.jpg ]; then
+  feh --bg-fill ~/Pictures/zion-waterfall.jpg
+else
+  xsetroot -solid '#303030'
+fi
+
 EOF
 )
 
@@ -336,7 +359,9 @@ if [ ! "$platform" = "Android" ]; then
 fi
 
 write_and_save ~/.xinitrc "$xinitrc"
+write_and_save ~/.xsession "$xinitrc"
 write_and_save ~/.Xresources "$xresources"
+write_and_save ~/.config/openbox/autostart "$ob_autostart"
 
 if [ "$platform" = "Android" ]; then
   mkdir -p ~/.termux
