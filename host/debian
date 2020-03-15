@@ -13,7 +13,15 @@ xinit
 gimp # photo editor
 feh # image utility view images/display backgrounds etc
 tint2 # taskbar/panel
+bluemon # bluetooth applet
+# nm-tray # network system tray
+network-manager-gnome # nm-applet system tray
+rofi # spotlight like program launcher
+orage # calendar applet used by tint2
+pcmanfm # file manager (trial replacement for Thunar)
+pavucontrol # sound manager
 fonts-ubuntu
+samba # file/printer/service sharing protocol
 )
 
 sudo apt-get install -y $(join_by ' ' "${packages[@]}")
@@ -21,6 +29,7 @@ sudo apt-get install -y $(join_by ' ' "${packages[@]}")
 sudo systemctl enable ssh # enable sshd at boot
 
 # TODO include openbox config
+# TODO include tint2 config
 
 function rpi4_config {
   # TODO how is lakka more performant in retroarch/emulation?
@@ -59,3 +68,5 @@ function retroarch_install {
     CFLAGS='-mfpu=neon -mtune=cortex-a72 -march=armv8-a' ./configure --disable-opengl1 --enable-neon --enable-opengles3 --enable-opengles --disable-videocore
     make -j4
 }
+
+# XXX Ref: https://www.theurbanpenguin.com/setting-up-a-samba-server-on-raspberry-pi/

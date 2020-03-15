@@ -219,14 +219,11 @@ printf -- "$(yellow '  ->') write vim/neovim color files $(yellow '(not implemen
 printf -- "$(green '==>') Font\n"
 
 printf -- "$(blue '  ->') not implemented for now.\n"
-# terminus=$(fc-list :scalable=true:spacing=mono: family | grep 'xos4 Terminus')
-# maybe just select from the above call?
+has_ubuntu_mono=$(fc-list :scalable=true:spacing=mono: family | grep 'Ubuntu Mono')
 
-# if [ "$terminus" = '' ]; then
-#
-# else
-#   printf -- "$(blue '  ->') Terminus font found using fc-list\n"
-# fi
+if [ ! "$has_ubuntu_mono" = '' ]; then
+  printf -- "$(blue '  ->') Ubuntu Mono font found using fc-list\n"
+fi
 
 # }}}
 # Locale {{{
@@ -236,7 +233,7 @@ echo '--> Check locale-gen?'
 printf -- "$(yellow '  ->') I do not currently write to /etc/vconsole.conf $(yellow '(not implemented)')\n"
 
 
-xterm_text_size=12
+xterm_text_size=10
 dpi=70
 
 if [ $(command -v xdpyinfo) ] && [ $(command -v awk) ]; then
@@ -244,22 +241,25 @@ if [ $(command -v xdpyinfo) ] && [ $(command -v awk) ]; then
   if [ $res = '3840x2160' ]; then
     printf -- "$(blue '  ->') HiDPI screen detected, adjusting dpi & xterm text size\n"
     dpi=144
-    xterm_text_size=28
   elif [ $res = '2560x1440' ]; then
+    printf -- "$(blue '  ->') 1440p screen detected, adjusting dpi & xterm text size\n"
     dpi=90
   fi
 else
   printf -- "$(yellow '  ->') xdpyinfo and/or awk are not present so I can't check your resolution.\n"
 fi
 
+faceName="! couldn't find Ubuntu Mono, no faceName set"
+if [ ! "$has_ubuntu_mono" = '' ]; then
+  faceName='XTerm*faceName: Ubuntu Mono'
+fi
 
-# TODO if we don't have terminus installed, *font will cause X11 emacs to fail:
-# *font: -*-terminus-medium-*-*-*-$xterm_text_size-*-*-*-*-*-iso10646-1
 xresources=$(cat <<EOF
 Xft.dpi: $dpi
 XTerm*utf8: 1
-xterm*font:     *-fixed-*-*-*-$xterm_text_size-*
 XTerm*termName: xterm-256color
+$faceName
+XTerm*faceSize: $xterm_text_size
 XTerm*VT100.geometry: 160x50
 XTerm*titeInhibit: false
 XTerm*ScrollBar: false
@@ -300,33 +300,30 @@ EOF
 xinitrc=$(cat <<"EOF"
 LANG='en_US.UTF-8'
 
-[[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
+# N.B openbox seems to only load ~/.Xdefaults, this line does nothing.
+# Leaving this here to recall the resources vs defaults situation.
+# [[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
 
 xset r rate 200 25
 
 setxkbmap -layout us -option ctrl:nocaps
 
-if command -v gnome-session; then
-  exec gnome-session
-else
-  exec openbox-session
-fi
+exec openbox-session
 EOF
 )
 
 ob_autostart=$(cat <<"EOF"
 # http://interfacelift.com/wallpaper/D0eda083/04197_zionwaterfallafterthestorm_3840x2160.jpg
 
-[[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
-
-xset r rate 200 25
+nm-applet &
+blueman-applet &
+tint2 &
 
 if [ -f ~/Pictures/zion-waterfall.jpg ]; then
   feh --bg-fill ~/Pictures/zion-waterfall.jpg
 else
   xsetroot -solid '#303030'
 fi
-
 EOF
 )
 
@@ -353,14 +350,14 @@ color15=$bright_white
 EOF
 )
 
-# TODO am I running inside a display? xhost not present on arch == unreliable
-if [ ! "$platform" = "Android" ]; then
+if xset q &>/dev/null; then # check if running inside X server
   xrdb -merge <<< "$xresources"
 fi
 
 write_and_save ~/.xinitrc "$xinitrc"
 write_and_save ~/.xsession "$xinitrc"
 write_and_save ~/.Xresources "$xresources"
+write_and_save ~/.Xdefaults "$xresources"
 write_and_save ~/.config/openbox/autostart "$ob_autostart"
 
 if [ "$platform" = "Android" ]; then
