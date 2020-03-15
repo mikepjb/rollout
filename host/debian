@@ -1,16 +1,22 @@
 #!/bin/bash -e
 
+join_by() { local IFS="$1"; shift; echo "$*"; }
+
 # started for pi 4
 
-sudo apt-get install -y \
-  neovim \
-  xterm \
-  tmux \
-  openbox \
-  xinit \
-  gimp \
-  feh \
-  fonts-ubuntu
+packages=(
+neovim
+xterm
+tmux # terminal multiplexer
+openbox # X11 window manager
+xinit
+gimp # photo editor
+feh # image utility view images/display backgrounds etc
+tint2 # taskbar/panel
+fonts-ubuntu
+)
+
+sudo apt-get install -y $(join_by ' ' "${packages[@]}")
 
 sudo systemctl enable ssh # enable sshd at boot
 
