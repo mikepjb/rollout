@@ -6,6 +6,7 @@
 # TODO make sure gmail/good email client opens when firefox click email address
 # TODO check for terminus too otherwise.. what is a safe choice? can I just say default mono?
 # TODO check locale? LANG? locale-gen etc
+# TODO use update-locale.. it's a thing (thanks retropie docs!)'
 
 # Functions {{{
 
