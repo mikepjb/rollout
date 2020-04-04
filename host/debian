@@ -5,6 +5,22 @@
 # if apt is hanging, try apt-get clean to clear out the cache.
 # - turns out during qemu/arm64 chroot installation, apt-get was hanging
 # because of dbus (not sure why but stopping the service worked)
+# TODO mac randomisation conf should not be in root..
+
+# TODO 3d acceleration is broken on rpi4 if you install the following packages:
+# libgl1-mesa
+# libgl1-mesa-dev
+# libglu1-mesa-dev
+# libgles2-mesa
+# libgles2-mesa-dev
+# mesa-common-dev
+# libegl1-mesa
+# libegl1-mesa-dev
+
+# libglu1-mesa is ok.. mesa-utils depends on it
+
+# TODO /home/mikepjb didn't have correct permissions so .bash_history etc
+# didn't work properly
 
 # Notes for image building:
 # - sudo
@@ -56,6 +72,7 @@ dev=(
   subversion
   sassc
   libxml2
+  kmscube # 3d testing program
 )
 
 user=(
@@ -65,6 +82,7 @@ user=(
 desktop=(
   arandr
   compton # compositor, better window drag performance
+  feh # image viewer, also displays wallpaper
 )
 
 packages=(
@@ -76,7 +94,7 @@ packages=(
   inkscape # svg editor
   feh # image utility view images/display backgrounds etc
   tint2 # taskbar/panel
-  bluemon # bluetooth applet
+  blueman # bluetooth applet
   network-manager-gnome # nm-applet system tray
   rofi # spotlight like program launcher
   orage # calendar applet used by tint2
@@ -172,6 +190,10 @@ function retroarch_install {
     # Edit Makefile and add a line: UDEV_LIBS += -lXxf86vm
     CFLAGS='-mfpu=neon -mtune=cortex-a72 -march=native' ./configure --disable-opengl1 --enable-neon --enable-opengles3 --enable-opengles --disable-videocore
     make -j4
+}
+
+function retroarch_round2 {
+  apt-get build-dep retroarch
 }
 
 function qemu_install {
