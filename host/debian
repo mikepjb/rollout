@@ -37,6 +37,7 @@ base=(
   openssl
   openssh-client
   openssh-server
+  bash-completion
 )
 
 # TODO remember you will need to set a password for a user with vncpasswd
