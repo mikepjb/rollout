@@ -1,32 +1,130 @@
 #!/bin/bash -e
 
+# N.B - move these notes to hypalynx.com
+# NetworkManager uses it's own internal DHCP client so dhcpcd is not required
+# if apt is hanging, try apt-get clean to clear out the cache.
+# - turns out during qemu/arm64 chroot installation, apt-get was hanging
+# because of dbus (not sure why but stopping the service worked)
+
+# Notes for image building:
+# - sudo
+# - hostname in /etc/hosts (after localhost)
+
 join_by() { local IFS="$1"; shift; echo "$*"; }
 
 # started for pi 4
 
-packages=(
-neovim
-xterm
-tmux # terminal multiplexer
-openbox # X11 window manager
-xinit
-gimp # photo editor
-feh # image utility view images/display backgrounds etc
-tint2 # taskbar/panel
-bluemon # bluetooth applet
-# nm-tray # network system tray
-network-manager-gnome # nm-applet system tray
-rofi # spotlight like program launcher
-orage # calendar applet used by tint2
-pcmanfm # file manager (trial replacement for Thunar)
-pavucontrol # sound manager
-fonts-ubuntu
-samba # file/printer/service sharing protocol
+base=(
+  sudo
+  tmux # terminal multiplexer
+  vim
+  make
+  gcc
+  g++
+  cmake
+  automake
+  autoconf
+  git
+  zip
+  curl
+  wget
+  tree
+  bash-completion
+  unzip
+  htop
+  rlwrap
+  gpg
+  openssl
+  openssh-client
+  openssh-server
 )
 
-sudo apt-get install -y $(join_by ' ' "${packages[@]}")
+# TODO remember you will need to set a password for a user with vncpasswd
+server=(
+  tigervnc
+  tigervnc-standalone-server
+  tigervnc-xorg-extension
+)
 
-sudo systemctl enable ssh # enable sshd at boot
+dev=(
+  openjdk-11-jdk
+  openjdk-11-source
+  chromium
+  redis
+  mongodb-org
+  subversion
+  sassc
+  libxml2
+)
+
+user=(
+  gnumeric
+)
+
+desktop=(
+  arandr
+  compton # compositor, better window drag performance
+)
+
+packages=(
+  firefox-esr # not sure why debian only has esr in stable? is firefox available in testing?
+  xterm
+  openbox # X11 window manager
+  xinit
+  gimp # photo editor
+  inkscape # svg editor
+  feh # image utility view images/display backgrounds etc
+  tint2 # taskbar/panel
+  bluemon # bluetooth applet
+  network-manager-gnome # nm-applet system tray
+  rofi # spotlight like program launcher
+  orage # calendar applet used by tint2
+  pcmanfm # file manager (trial replacement for Thunar)
+  pavucontrol # sound manager
+  fonts-ubuntu
+  samba # file/printer/service sharing protocol
+  libirs161 # dep for dnsutils
+  dnsutils # includes nslookup tool
+)
+
+# TODO non docker requires sudo, sudo tee for example
+
+
+apt-get update
+apt-get install -y $(join_by ' ' "${base[@]}")
+
+# including mongo debian repo
+wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add -
+echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.2 main" | tee /etc/apt/sources.list.d/mongodb-org-4.2.list
+apt-get update
+
+apt-get install -y $(join_by ' ' "${dev[@]}")
+# TODO should be conditional based on 'minimal'/docker install
+# apt-get install -y $(join_by ' ' "${packages[@]}")
+
+function neovim_install {
+  apt-get install -y ninja-build gettext libtool libtool-bin pkg-config unzip
+  git clone https://github.com/neovim/neovim.git
+  cd ./neovim
+  make CMAKE_BUILD_TYPE=Release
+  make install # TODO non docker requires sudo for this..
+  cd ..
+  rm -rf ./neovim
+}
+
+neovim_install
+
+function clojure_install {
+  curl -O https://download.clojure.org/install/linux-install-1.10.1.536.sh
+  chmod +x linux-install-1.10.1.536.sh
+  ./linux-install-1.10.1.536.sh
+}
+
+clojure_install
+
+# TODO should be enabled on physical machines.. but not docker as it's
+# entrypoint is /usr/sbin/sshd -D'
+# sudo systemctl enable ssh # enable sshd at boot
 
 # TODO include openbox config
 # TODO include tint2 config
@@ -56,17 +154,30 @@ function rpi4_config {
 }
 
 function retroarch_install {
-  sudo apt-get install \
-    libxxf86vm-dev \
-    libxxf86dga-dev \
-    libx11-xcb-dev \
-    libavdevice-dev \
-    libgles2-mesa-dev \
+  retro_deps=(
+    libxxf86vm-dev
+    libxxf86dga-dev
+    libx11-xcb-dev
+    libavdevice-dev
+    libgles2-mesa-dev
     xorg-dev
+    libasound2-dev
+    libudev-dev
+    libsdl2-dev # alsa lib
+  )
+
+  apt-get install -y $(join_by ' ' "${retro_deps[@]}")
 
     # Edit Makefile and add a line: UDEV_LIBS += -lXxf86vm
-    CFLAGS='-mfpu=neon -mtune=cortex-a72 -march=armv8-a' ./configure --disable-opengl1 --enable-neon --enable-opengles3 --enable-opengles --disable-videocore
+    CFLAGS='-mfpu=neon -mtune=cortex-a72 -march=native' ./configure --disable-opengl1 --enable-neon --enable-opengles3 --enable-opengles --disable-videocore
     make -j4
+}
+
+function qemu_install {
+  sudo apt-get install libusb-1.0.0-dev libusbredirparser-dev
+  git clone git://git.qemu-project.org/qemu.git
+  cd qemu
+  make -j$(nproc)
 }
 
 # XXX Ref: https://www.theurbanpenguin.com/setting-up-a-samba-server-on-raspberry-pi/
