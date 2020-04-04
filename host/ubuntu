@@ -26,6 +26,10 @@ function haskell_setup {
   sudo apt install -y haskell haskell-stack
 }
 
+function elm_setup {
+  npm i -g elm elm-test elm-format elm-oracle elm-pages node-elm-compiler
+}
+
 # sudo apt install clojure provides 1.9.0.. no clj cli either
 # if no clj/clojure on command line
 # sudo apt install openjdk-11-jdk openjdk-11-source maven
