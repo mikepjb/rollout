@@ -770,7 +770,7 @@ write_and_save ~/.eslintrc.js "$eslintrc"
 # Git {{{
 printf -- "$(green '==>') Git Aliases\n"
 
-git config --global --replace-all core.editor 'vim'
+git config --global --replace-all core.editor 'nvim'
 git config --global --replace-all core.autocrlf false
 git config --global --replace-all alias.aa 'add --all'
 git config --global --replace-all alias.br 'branch --sort=committerdate'
