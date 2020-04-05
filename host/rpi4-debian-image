@@ -1,0 +1,172 @@
+#!/bin/bash -e
+
+# N.B This script is interactive, it will prompt you to choose locales etc
+# I haven't run this as a script, instead I copy/paste the functions into a terminal
+# Also executed as super user
+
+# Used to create an img that can be written to a micro SD card.
+# This should provide Debian Buster 64-bit with the following customisations:
+# - locale is en_GB.UTF-8
+# - keyboard is US
+# - tz is Europe/London
+
+BaseWorkDir=/rpi4
+
+function install_host_deps {
+  apt install debootstrap dosfstools qemu-user-static binfmt-support build-essential git bison flex libssl-dev cmake libncurses-dev
+  apt install binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-8-aarch64-linux-gnu
+  ln -s /usr/bin/aarch64-linux-gnu-g++-8 /usr/bin/aarch64-linux-gnu-g++
+}
+
+function create_image {
+  mkdir -p $BaseWorkDir
+  cd $BaseWorkDir
+  dd if=/dev/zero of=debian-rpi4.img iflag=fullblock bs=1M count=3600
+
+  Loop_Dev=$(losetup -f -P --show debian-rpi4.img)
+  
+  parted $Loop_Dev "mklabel msdos"			
+  parted $Loop_Dev "mkpart p fat32 1 255"	# 254MB Boot Partition
+  parted $Loop_Dev "mkpart p ext4 255 -1"	# Rest eine Partition
+
+  mkfs.vfat "${Loop_Dev}p1"
+  mkfs.ext4 "${Loop_Dev}p2"
+
+  mount "${Loop_Dev}p2" /mnt
+  mkdir /mnt/boot
+  mount "${Loop_Dev}p1" /mnt/boot
+  mount -i -o remount,exec,dev /mnt
+}
+
+function bootstrap_debian {
+  qemu-debootstrap --arch=arm64 buster /mnt
+}
+
+function integrate_and_chroot { # integrate with host system
+  mount -o bind /sys /mnt/sys
+  mount -o bind /proc /mnt/proc
+  mount -o bind /dev /mnt/dev
+  mount -o bind /dev/pts /mnt/dev/pts
+
+  cp /etc/resolv.conf /mnt/etc/resolv.conf 
+
+  chroot /mnt
+}
+
+function setup_repositories {
+echo "deb http://deb.debian.org/debian/ buster main non-free contrib
+# deb-src http://deb.debian.org/debian/ buster main non-free contrib
+
+deb http://security.debian.org/debian-security buster/updates main contrib non-free
+# deb-src http://security.debian.org/debian-security buster/updates main contrib non-free
+
+deb http://deb.debian.org/debian/ buster-updates main contrib non-free
+# deb-src http://deb.debian.org/debian/ buster-updates main contrib non-free" > /etc/apt/sources.list
+}
+
+function configure_locale {
+  apt install console-setup debconf locales wget
+
+  dpkg-reconfigure locales          
+  dpkg-reconfigure keyboard-configuration 
+  dpkg-reconfigure tzdata
+
+  locale-gen
+}
+
+function setup_users {
+  # I am currently baking my own user into the image
+  passwd # set root password
+  # passwd -e root # expire root password so it must be reset on next login
+
+  groupadd bluetooth
+  groupadd pulse
+  groupadd pulse-access
+  useradd -m -G video,audio,render,sudo,bluetooth,systemd-journal,pulse,pulse-access mikepjb
+  passwd mikepjb
+
+  # We need this udev rule because the graphics driver does not set the user rights for the video device for normal users.
+  echo 'SUBSYSTEM=="vchiq",GROUP="video",MODE="0660"' > /etc/udev/rules.d/10-vchiq-permissions.rules
+}
+
+function setup_and_run_dbus {
+  apt install ca-certificates dbus
+  service dbus restart
+
+}
+
+function configure_hosts {
+  echo "mikepjb-rpi" > /etc/hostname
+
+echo "127.0.0.1	localhost mikepjb-rpi
+::1		localhost ip6-localhost ip6-loopback
+ff02::1		ip6-allnodes
+ff02::2		ip6-allrouters " > /etc/hosts
+}
+
+function provide_fstab {
+  echo "
+  /dev/mmcblk0p1 /boot   vfat    noatime,nodiratime                   0  2
+  /dev/mmcblk0p2 /       ext4    noatime,nodiratime,errors=remount-ro 0  1
+  tmpfs          /tmp    tmpfs   nosuid                               0  0
+  " > /etc/fstab
+}
+
+function setup_networking {
+  apt install dhcpcd5 net-tools ssh ntp
+
+  systemctl enable ssh
+  systemctl enable systemd-networkd.service
+  systemctl enable systemd-resolved.service
+}
+
+function install_basic_utils {
+  apt install tmux vim multitail cpufrequtils psmisc dnsutils htop autofs
+}
+
+function audio {
+  apt install alsa-utils pulseaudio
+
+  # N.B when using the above I get an error processing the gdk-pixbuf under
+  # qemu, which I think leads to a bad install so I am cleaning the cache and
+  # installing it specifically afterward:
+  apt-get install libgdk-pixbuf2.0
+
+echo "# Raspberry Config
+
+load-module module-alsa-sink device=hw:2,0 sink_name=jack sink_properties=device.description=Kopfhörer
+load-module module-alsa-sink device=hw:0,1 sink_name=hdmi0 sink_properties=device.description=HDMI_0
+load-module module-alsa-sink device=hw:1,0 sink_name=hdmi1 sink_properties=device.description=HDMI_1
+load-module module-combine-sink sink_name=combined slaves=hdmi0,hdmi1,jack sink_properties=device.description=Kombiniert
+set-default-sink combined" >> /etc/pulse/default.pa
+}
+
+function wireless {
+  apt install wpasupplicant wireless-tools git network-manager-gnome
+
+echo "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=GB"  > /etc/wpa_supplicant/wpa_supplicant.conf
+}
+
+function bluetooth {
+  apt install bluetooth bluez blueman
+}
+
+function desktop {
+  apt install openbox tint2 rofi
+}
+
+function main {
+  install_host_deps
+  create_image
+  bootstrap_debian
+  integrate_and_chroot
+  setup_repositories
+  configure_locale
+  setup_users
+  setup_and_run_dbus
+  configure_hosts
+  setup_networking
+  # and the others..
+}
