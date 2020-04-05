@@ -1,5 +1,10 @@
 #!/bin/bash -e
 
+# TODO stalled until you have a stabl install of qemu, I think having manually
+# installed qemu 4.something on my laptop for work means qemu-debootstrap is
+# not able to make the correct signal calls resulting in a bad install (esp.
+# pixbuf)
+
 # N.B This script is interactive, it will prompt you to choose locales etc
 # I haven't run this as a script, instead I copy/paste the functions into a terminal
 # Also executed as super user
@@ -9,6 +14,11 @@
 # - locale is en_GB.UTF-8
 # - keyboard is US
 # - tz is Europe/London
+
+# TODO
+# - no usb networking
+# - no vnc service
+# - no mesa with vc4
 
 BaseWorkDir=/rpi4
 
@@ -55,23 +65,22 @@ function integrate_and_chroot { # integrate with host system
 
 function setup_repositories {
 echo "deb http://deb.debian.org/debian/ buster main non-free contrib
-# deb-src http://deb.debian.org/debian/ buster main non-free contrib
+deb-src http://deb.debian.org/debian/ buster main non-free contrib
 
 deb http://security.debian.org/debian-security buster/updates main contrib non-free
-# deb-src http://security.debian.org/debian-security buster/updates main contrib non-free
+deb-src http://security.debian.org/debian-security buster/updates main contrib non-free
 
 deb http://deb.debian.org/debian/ buster-updates main contrib non-free
-# deb-src http://deb.debian.org/debian/ buster-updates main contrib non-free" > /etc/apt/sources.list
+deb-src http://deb.debian.org/debian/ buster-updates main contrib non-free" > /etc/apt/sources.list
 }
 
 function configure_locale {
   apt install console-setup debconf locales wget
 
-  dpkg-reconfigure locales          
-  dpkg-reconfigure keyboard-configuration 
+  # choose en_GB.UTF-8 and en_US.UTF-8 - GB is default, will also locale-gen for you
+  dpkg-reconfigure locales
+  dpkg-reconfigure keyboard-configuration # choose US
   dpkg-reconfigure tzdata
-
-  locale-gen
 }
 
 function setup_users {
@@ -92,7 +101,6 @@ function setup_users {
 function setup_and_run_dbus {
   apt install ca-certificates dbus
   service dbus restart
-
 }
 
 function configure_hosts {
@@ -105,11 +113,11 @@ ff02::2		ip6-allrouters " > /etc/hosts
 }
 
 function provide_fstab {
-  echo "
-  /dev/mmcblk0p1 /boot   vfat    noatime,nodiratime                   0  2
-  /dev/mmcblk0p2 /       ext4    noatime,nodiratime,errors=remount-ro 0  1
-  tmpfs          /tmp    tmpfs   nosuid                               0  0
-  " > /etc/fstab
+echo "
+/dev/mmcblk0p1 /boot   vfat    noatime,nodiratime                   0  2
+/dev/mmcblk0p2 /       ext4    noatime,nodiratime,errors=remount-ro 0  1
+tmpfs          /tmp    tmpfs   nosuid                               0  0
+" > /etc/fstab
 }
 
 function setup_networking {
@@ -130,7 +138,8 @@ function audio {
   # N.B when using the above I get an error processing the gdk-pixbuf under
   # qemu, which I think leads to a bad install so I am cleaning the cache and
   # installing it specifically afterward:
-  apt-get install libgdk-pixbuf2.0
+  apt-get clean cache
+  apt-get reinstall libgdk-pixbuf2.0
 
 echo "# Raspberry Config
 
@@ -153,8 +162,23 @@ function bluetooth {
   apt install bluetooth bluez blueman
 }
 
+function vc4_mesa {
+  sudo apt-get build-dep libegl1-mesa
+  wget ftp://ftp.freedesktop.org/pub/mesa/older-versions/20.x/20.1.4/MesaLib-10.3.4.tar.gz
+}
+
 function desktop {
   apt install openbox tint2 rofi
+}
+
+function umount {
+  cd /
+  umount --recursive 
+  umount /mnt/dev/pts
+  mount -o remount,ro /mnt/dev
+  umount /mnt/dev
+  umount /mnt/proc
+  umount /mnt/sys
 }
 
 function main {

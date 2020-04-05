@@ -1,13 +1,6 @@
 #!/bin/bash -e
 
-# N.B - move these notes to hypalynx.com
-# NetworkManager uses it's own internal DHCP client so dhcpcd is not required
-# if apt is hanging, try apt-get clean to clear out the cache.
-# - turns out during qemu/arm64 chroot installation, apt-get was hanging
-# because of dbus (not sure why but stopping the service worked)
-# TODO mac randomisation conf should not be in root..
-
-# TODO 3d acceleration is broken on rpi4 if you install the following packages:
+# TODO ONGOING 3d acceleration is broken on rpi4 if you install the following packages:
 # libgl1-mesa
 # libgl1-mesa-dev
 # libglu1-mesa-dev
@@ -16,15 +9,24 @@
 # mesa-common-dev
 # libegl1-mesa
 # libegl1-mesa-dev
+# -> reinstalling mesa brings back broadcom, it's likely overwriting packages
+# -> when this mesa exists, retroarch works fine!
+# -> seems to revert after first reboot almost, or maybe when ANYTHING is installed?
+# -> the above is to general, surely we can narrow this down?
 
 # libglu1-mesa is ok.. mesa-utils depends on it
 
-# TODO /home/mikepjb didn't have correct permissions so .bash_history etc
-# didn't work properly
+# TODO no vnc service? pref tigervnc
 
-# Notes for image building:
-# - sudo
-# - hostname in /etc/hosts (after localhost)
+# TODO icons aren't loading for blueman-applet etc
+# - apt clean cache and apt-get reinstall gdk-pixbuf-2.0
+
+# XXX fix these in the image:
+# - /home/mikepjb didn't have correct permissions so .bash_history etc didn't work properly
+# - sudo missing
+# - hostname missing in /etc/hosts (after localhost)
+# - bluetooth module is not loaded by default, once done and user is added to
+#   bluetooth group, bluetooth service works fine (do we need pi-bluetooth at all?)
 
 join_by() { local IFS="$1"; shift; echo "$*"; }
 
@@ -54,6 +56,7 @@ base=(
   openssh-client
   openssh-server
   bash-completion
+  rfkill # controls devices e.g wifi/bluetooth being turned on/off
 )
 
 # TODO remember you will need to set a password for a user with vncpasswd
@@ -73,6 +76,8 @@ dev=(
   sassc
   libxml2
   kmscube # 3d testing program
+  pciutils # contains lspci
+  devscripts # contains uscan & others for building .deb packages
 )
 
 user=(
@@ -83,6 +88,9 @@ desktop=(
   arandr
   compton # compositor, better window drag performance
   feh # image viewer, also displays wallpaper
+  bluez
+  bluez-firmware # needed?
+  obconf # openbox configuration utility
 )
 
 packages=(
